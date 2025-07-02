@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 18777,
+      allowedHosts: ["localhost", "127.0.0.1", "0.0.0.0"],
     },
     resolve: {
       alias: {
