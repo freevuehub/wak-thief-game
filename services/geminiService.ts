@@ -6,11 +6,6 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("API_KEY environment variable not set");
 }
 
-const searchParams = new URLSearchParams(window.location.search);
-const lang = searchParams.get("lang") || "ko";
-
-console.log(lang);
-
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface ThiefProfile {
@@ -25,9 +20,7 @@ export const generateThiefProfile = async (
   personality: string,
   background: string
 ): Promise<ThiefProfile> => {
-  const prompt =
-    lang === "ko"
-      ? `
+  const prompt = `
     당신은 어둡고 누아르 분위기의 범죄 조직 경영 게임의 게임 마스터입니다.
     새로운 도둑의 프로필을 생성해야 합니다.
     아래 항목 중 비어있는 것이 있다면 적절한 값으로 채워주세요:
@@ -50,32 +43,6 @@ export const generateThiefProfile = async (
         "여기는 두 번째 문장이고요.",
         "이런 식으로...",
         "마지막 문장입니다."
-      ]
-    }
-  `
-      : `
-    You are a game master for a dark, noir-themed crime syndicate management game.
-    You need to create a profile for a new thief.
-    If any of the following fields are empty, please fill them with appropriate values:
-    - Name: "${name}"
-    - Personality (a single adjective tag): "${personality}"
-    - Background (a short phrase tag): "${background}"
-
-    Based on the completed profile, please generate an introductory dialogue for this thief, as if they are reporting to the boss for the first time.
-    This dialogue must be **long and detailed, at least 4-5 sentences**, to make the character feel alive.
-    It should reveal their personality, background, ambitions, or even a hint of anxiety.
-    Please format the dialogue as an array of short sentences.
-
-    Return ONLY a valid JSON object with the following structure:
-    {
-      "name": "...",
-      "personality": "...",
-      "background": "...",
-      "dialogue": [
-        "This is the first sentence.",
-        "Here is the second one.",
-        "And so on...",
-        "This is the last sentence."
       ]
     }
   `;
@@ -103,18 +70,11 @@ export const generateThiefProfile = async (
       name: "John Doe",
       personality: "Mysterious",
       background: "Ex-spy",
-      dialogue:
-        lang === "ko"
-          ? [
-              "보스, 일을 하러 왔습니다.",
-              "시키는 건 뭐든지 하죠.",
-              "과거는 묻지 말아 주십시오.",
-            ]
-          : [
-              "Boss, I'm here to work.",
-              "I'll do whatever you ask.",
-              "Just don't ask about my past.",
-            ],
+      dialogue: [
+        "보스, 일을 하러 왔습니다.",
+        "시키는 건 뭐든지 하죠.",
+        "과거는 묻지 말아 주십시오.",
+      ],
     };
   }
 };
@@ -124,15 +84,10 @@ export const generateThiefPortrait = async (
   personality: string,
   background: string
 ): Promise<string> => {
-  const visionPrompt =
-    lang === "ko"
-      ? `
+  const visionPrompt = `
     이 이미지의 아트 스타일, 색감, 조명, 구도를 분석해서 
     새로운 캐릭터 포트레이트를 그릴 때 참고할 수 있는 
     상세한 스타일 가이드를 만들어주세요.
-  `
-      : `
-    Analyze the art style, color palette, lighting, and composition of this image to create a detailed style guide for creating a new character portrait.
   `;
 
   // resource/image.png 파일을 Base64로 읽기
@@ -171,9 +126,7 @@ export const generateThiefPortrait = async (
   // 분석된 스타일 정보를 바탕으로 Imagen 프롬프트 생성
   const styleGuide = visionResponse.text || "";
 
-  const prompt =
-    lang === "ko"
-      ? `
+  const prompt = `
     You are a character illustrator. Create a high-quality digital painting portrait of a character for a game. The visual style of the portrait should be **entirely dictated by the character's profile**.
 
     **Character Profile:**
@@ -192,34 +145,6 @@ export const generateThiefPortrait = async (
     2.  **BACKGROUND DRIVES APPEARANCE:** The character's clothing and environment **MUST** reflect their 'Background' tag.
         -   For example, an '어부' (Fisherman) should look like a fisherman, with appropriate clothing (like a beanie or weathered jacket, NOT a suit) and perhaps a hint of the sea in the background.
         -   An '전직 군인' (Ex-soldier) might have a disciplined posture or a specific haircut.
-
-    3.  **DIVERSITY IS REQUIRED:** Create unique individuals. Vary gender, age, and ethnicity. Do not rely on common stereotypes or always generate middle-aged men.
-
-    4.  **TECHNICAL DETAILS:**
-        -   **Style:** Digital painting, character concept art. The style should be clean and expressive.
-        -   **Framing:** Head-and-shoulders portrait.
-        -   **Visibility:** The face and expression must be clear and fully visible. NO masks, NO heavy obscuring shadows.
-        -   **Quality:** Clean, high-quality art. No text or watermarks.
-  `
-      : `
-    You are a character illustrator. Create a high-quality digital painting portrait of a character for a game. The visual style of the portrait should be **entirely dictated by the character's profile**.
-
-    **Character Profile:**
-    - **Name:** ${name}
-    - **Personality:** '${personality}'
-    - **Background:** '${background}'
-
-    ---
-
-    **CRITICAL INSTRUCTIONS - FOLLOW THESE EXACTLY:**
-
-    1.  **PERSONALITY DRIVES EXPRESSION AND MOOD:** The character's facial expression and the overall mood of the image are the top priority. They **MUST** be a direct and obvious representation of the 'Personality' tag.
-        -   **If the personality is positive (e.g., 'Cheerful', 'Positive', 'Jovial', 'Laughter'), the character MUST be visibly smiling or laughing.** The entire portrait should feel bright and optimistic. A neutral or serious expression is an absolute failure in this case.
-        -   If the personality is negative (e.g., 'Pessimistic', 'Gloomy'), the expression and lighting must reflect this.
-
-    2.  **BACKGROUND DRIVES APPEARANCE:** The character's clothing and environment **MUST** reflect their 'Background' tag.
-        -   For example, a 'Fisherman' should look like a fisherman, with appropriate clothing (like a beanie or weathered jacket, NOT a suit) and perhaps a hint of the sea in the background.
-        -   An 'Ex-soldier' might have a disciplined posture or a specific haircut.
 
     3.  **DIVERSITY IS REQUIRED:** Create unique individuals. Vary gender, age, and ethnicity. Do not rely on common stereotypes or always generate middle-aged men.
 
@@ -251,9 +176,7 @@ export const generateDailyDialogue = async (
   >,
   eventSummary: string
 ): Promise<DailyBriefing> => {
-  const prompt =
-    lang === "ko"
-      ? `
+  const prompt = `
     당신은 누아르 범죄 게임의 게임 마스터입니다. 조직원 중 한 명이 하루를 마치고 보스에게 아침 보고를 하러 사무실에 들어왔습니다.
     
     조직원 정보:
@@ -272,30 +195,6 @@ export const generateDailyDialogue = async (
     - 대사는 짧은 문장 단위로 나누어 배열 형태로 만들어주세요. (최소 3문장 이상)
     
     다음 구조를 가진 유효한 JSON 객체만 반환해주세요. 다른 설명은 붙이지 마세요.
-    {
-      "narration": "...",
-      "dialogue": ["...", "...", "..."]
-    }
-  `
-      : `
-    You are the game master of a noir crime game. One of your syndicate members has entered the office to give their morning report to the Boss.
-    
-    Member's Information:
-    - Name: ${thief.name}
-    - Personality: ${thief.personality}
-    - Background: ${thief.background}
-    - Current Condition: ${thief.condition}/100
-    - Current Loyalty: ${thief.loyalty}/100
-
-    Key Activity from Yesterday: ${eventSummary}
-
-    Please generate a short background narration and the member's report dialogue for this situation.
-    - The narration should briefly describe the member entering the office in 1-2 sentences. (e.g., "Rain was pouring outside. ${thief.name} entered the office, shrugging off a wet coat. A hint of exhaustion was plain on his face.")
-    - The dialogue must **strongly** reflect the member's personality, background, condition, and loyalty. Make the speech style unique and not stiff. (e.g., a cynical personality might speak sarcastically, a loyal one enthusiastically).
-    - If condition is below 50, the dialogue MUST include fatigue. If loyalty is below 50, it MUST include discontent.
-    - Format the dialogue as an array of short sentences (at least 3 sentences).
-    
-    Return ONLY a valid JSON object with the following structure. Do not add any other explanations.
     {
       "narration": "...",
       "dialogue": ["...", "...", "..."]
@@ -320,42 +219,23 @@ export const generateDailyDialogue = async (
     return JSON.parse(jsonStr) as DailyBriefing;
   } catch (e) {
     console.error("Failed to parse dialogue JSON from Gemini:", e);
-    return lang === "ko"
-      ? {
-          narration: `${thief.name}이/가 사무실 문을 열고 들어왔다.`,
-          dialogue: ["보고할 게 있습니다, 보스.", "어제는... 별일 없었습니다."],
-        }
-      : {
-          narration: `${thief.name} opened the office door and walked in.`,
-          dialogue: [
-            "I have something to report, Boss.",
-            "Yesterday... nothing special happened.",
-          ],
-        };
+    return {
+      narration: `${thief.name}이/가 사무실 문을 열고 들어왔다.`,
+      dialogue: ["보고할 게 있습니다, 보스.", "어제는... 별일 없었습니다."],
+    };
   }
 };
 
 export const generateNewsReport = async (events: string[]): Promise<string> => {
   if (events.length === 0) {
-    return lang === "ko"
-      ? "어젯밤 도시는 조용했습니다. 너무나도 조용했죠."
-      : "The city was quiet last night. Too quiet.";
+    return "어젯밤 도시는 조용했습니다. 너무나도 조용했죠.";
   }
 
-  const prompt =
-    lang === "ko"
-      ? `
+  const prompt = `
     당신은 범죄가 만연한 도시의 'KNIGHTLY NEWS' 소속 뉴스 앵커입니다.
     어젯밤 발생한 아래 사건들을 요약하는 짧고 드라마틱한 뉴스 방송을 작성해주세요.
     간결하게, 1940년대 누아르 스타일을 유지해야 합니다. 자극적인 묘사나 '지직' 같은 효과음은 빼주세요.
     사건들:
-    - ${events.join("\n- ")}
-  `
-      : `
-    You are a news anchor for 'KNIGHTLY NEWS' in a crime-ridden city.
-    Write a short, dramatic news broadcast summarizing the events below that occurred last night.
-    Keep it concise and maintain a 1940s noir style. Omit sensational descriptions or sound effects like 'static'.
-    Events:
     - ${events.join("\n- ")}
   `;
 
@@ -377,9 +257,7 @@ export const generateActionResponse = async (
   thief: Pick<Thief, "name" | "personality" | "loyalty">,
   action: ThiefAction
 ): Promise<ActionResponse> => {
-  const prompt =
-    lang === "ko"
-      ? `
+  const prompt = `
     당신은 누아르 범죄 게임의 게임 마스터입니다. 보스가 조직원에게 임무를 지시했습니다.
     
     조직원 정보:
@@ -394,26 +272,6 @@ export const generateActionResponse = async (
     - 충성심이 높으면 기뻐하거나 열정적으로, 낮으면 마지못해 하거나 불만스럽게 반응해야 합니다.
 
     다음 구조를 가진 유효한 JSON 객체만 반환해주세요:
-    {
-      "responseDialogue": "...",
-      "closingNarration": "..."
-    }
-  `
-      : `
-    You are the game master of a noir crime game. The Boss has just given a member an order.
-    
-    Member's Information:
-    - Name: ${thief.name}
-    - Personality: ${thief.personality}
-    - Loyalty: ${thief.loyalty}/100
-
-    Assigned Mission: ${ACTION_DETAILS[action].name}
-
-    Please generate a short reply (1 sentence) from the member and a narration (1-2 sentences) describing their reaction.
-    - Both the dialogue and narration must **strongly** reflect the member's personality and loyalty.
-    - If loyalty is high, they should react happily or enthusiastically. If it's low, they should seem reluctant or disgruntled.
-
-    Return ONLY a valid JSON object with the following structure:
     {
       "responseDialogue": "...",
       "closingNarration": "..."
