@@ -24,3 +24,11 @@ export const Svg: React.FC<SVGProps> = (props) => {
     </svg>
   )
 }
+
+export { default as Money } from './Money'
+export { default as Alert } from './Alert'
+export { default as Team } from './Team'
+export { default as Loyalty } from './Loyalty'
+export { default as Calendar } from './Calendar'
+export { default as Map } from './Map'
+export { default as News } from './News'

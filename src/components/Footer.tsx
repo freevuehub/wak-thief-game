@@ -1,5 +1,5 @@
 import React from 'react'
-import { CalendarIcon, MapIcon, NewsIcon } from './icons'
+import { Calendar, Map, News } from '@/icons'
 
 type Props = {
   day: number
@@ -18,20 +18,20 @@ const Footer: React.FC<Props> = (props) => {
             onClick={props.onToggleNews}
             className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors"
           >
-            <NewsIcon className="w-5 h-5" />
+            <News className="w-5 h-5" />
             <span>뉴스 기록</span>
           </button>
           <button
             onClick={props.onToggleMap}
             className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors"
           >
-            <MapIcon className="w-5 h-5" />
+            <Map className="w-5 h-5" />
             <span>도시 지도</span>
           </button>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <CalendarIcon className="w-6 h-6 text-gray-400" />
+            <Calendar className="w-6 h-6 text-gray-400" />
             <span className="text-xl font-bold">{props.day}일차</span>
           </div>
           <button
