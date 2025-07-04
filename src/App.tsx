@@ -7,7 +7,7 @@ const App: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    // if (thieves.length === 0) setIsDialogOpen(true)
+    if (thieves.length === 0) setIsDialogOpen(true)
   }, [thieves])
 
   return (

@@ -1,12 +1,11 @@
 import { ai } from '.'
-import type { Profile } from '@/types'
+import type { ImageParams } from '@/types'
 
 const createThiefImage =
   (prompt: string) =>
-  async (params: Profile): Promise<string> => {
-    prompt = prompt.replace(/\$\{name\}/g, params.name)
-    prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
-    prompt = prompt.replace(/\$\{background\}/g, params.background || '')
+  async (params: ImageParams): Promise<string> => {
+    prompt = prompt.replace(/\$\{character\}/g, params.character)
+    prompt = prompt.replace(/\$\{background\}/g, params.background)
 
     const response = await ai.models.generateImages({
       model: 'imagen-3.0-generate-002',
@@ -14,9 +13,11 @@ const createThiefImage =
       config: { numberOfImages: 1, outputMimeType: 'image/jpeg' },
     })
 
-    const base64ImageBytes: string = response.generatedImages[0].image.imageBytes
+    if (!response.generatedImages) return ''
 
-    return `data:image/jpeg;base64,${base64ImageBytes}`
+    return response.generatedImages[0].image
+      ? `data:image/jpeg;base64,${response.generatedImages[0].image.imageBytes}`
+      : ''
   }
 
 export default createThiefImage
