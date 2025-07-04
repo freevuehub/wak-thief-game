@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Footer from './components/Footer'
 import { Thief, Dialog, StatCard, Side } from '@/components'
+import { useStore } from '@/hooks'
 
 const App: React.FC = () => {
+  const { thieves } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    // if (thieves.length === 0) setIsDialogOpen(true)
+  }, [thieves])
 
   return (
     <>
