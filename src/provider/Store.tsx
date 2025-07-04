@@ -1,10 +1,13 @@
 import { createContext, useState } from 'react'
-
-import { Profile } from '@/types'
+import { Thief, Profile, GameStat } from '@/types'
 import { useAI } from '@/hooks'
+import { DEFAULT_GAME_STAT } from '@/constants'
 
 export const StoreContext = createContext({
   loading: true,
+  thieves: [] as Array<Thief>,
+  gameStat: DEFAULT_GAME_STAT,
+  setGameStat: (_: Record<keyof GameStat, GameStat[keyof GameStat]>) => {},
   createThief: (_: Profile) => new Promise(() => {}),
 })
 
@@ -13,19 +16,27 @@ type Props = {
 }
 
 const StoreProvider: React.FC<Props> = (props) => {
-  const [loading, setLoading] = useState<boolean>(false)
   const { createThief } = useAI()
+
+  const [loading, setLoading] = useState<boolean>(false)
+  const [thieves, setThieves] = useState<Array<Thief>>([])
+  const [gameStat, setGameStat] = useState<GameStat>(DEFAULT_GAME_STAT)
 
   return (
     <StoreContext.Provider
       value={{
         loading,
+        thieves,
+        gameStat,
+        setGameStat: (value: Record<keyof GameStat, GameStat[keyof GameStat]>) => {
+          setGameStat((prev) => ({ ...prev, ...value }))
+        },
         createThief: async (data: Profile) => {
           try {
             setLoading(true)
-            const profile = await createThief(data)
+            const thief = await createThief(data)
 
-            console.log(profile)
+            setThieves((prev) => [...prev, { ...thief }])
           } catch {
             alert('조직원 생성 중 오류가 발생했습니다. API 키를 확인하고 다시 시도해주세요.')
           } finally {

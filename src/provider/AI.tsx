@@ -3,10 +3,11 @@ import { thiefAI } from '@/lib'
 import { usePrompt } from '@/hooks'
 import { PROMPT_KEY } from '@/constants'
 import { pipe } from '@fxts/core'
-import { Profile } from '@/types'
+import { Profile, Thief } from '@/types'
+import { v4 as uuidv4 } from 'uuid'
 
 export const AIContext = createContext({
-  createThief: (_: Profile) => new Promise(() => {}),
+  createThief: (_: Profile) => new Promise<Thief>(() => {}),
 })
 
 type Props = {
@@ -20,9 +21,9 @@ const AIProvider: React.FC<Props> = (props) => {
     <AIContext.Provider
       value={{
         createThief: (profile: Profile) => {
-          return new Promise((resolve) => {
+          return new Promise<Thief>((resolve) => {
             pipe(profile, thiefAI.createThief(prompt[PROMPT_KEY.CREATE_THIEF].ko), (data) => {
-              resolve(data)
+              resolve({ ...data, id: uuidv4() })
             })
           })
         },

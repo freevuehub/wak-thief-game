@@ -1,12 +1,15 @@
-import Header from './components/Header'
+import { useState } from 'react'
 import Footer from './components/Footer'
-import { Thief, Dialog } from '@/components'
+import { Thief, Dialog, StatCard, Side } from '@/components'
 
 const App: React.FC = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+
   return (
     <>
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
-        <Header cash={100} globalAlertLevel={100} thiefCount={100} averageLoyalty={100} />
+        <Side />
+        <StatCard />
         <Footer
           day={100}
           onEndDay={() => {}}
@@ -15,9 +18,11 @@ const App: React.FC = () => {
           onToggleNews={() => {}}
         />
       </div>
-      <Dialog>
-        <Thief.Create isFirstThief={true} />
-      </Dialog>
+      {isDialogOpen && (
+        <Dialog>
+          <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
+        </Dialog>
+      )}
     </>
   )
 }

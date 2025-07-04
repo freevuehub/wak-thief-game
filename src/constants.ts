@@ -1,4 +1,5 @@
 import { ThiefAction } from './legacyType'
+import { GameStat } from './types'
 
 export const INITIAL_CASH = 5000
 export const RECRUITMENT_COST = 500
@@ -54,4 +55,10 @@ export enum PROMPT_KEY {
   REPORT = 'REPORT',
   ACTIONS = 'ACTIONS',
   NEWS = 'NEWS',
+}
+
+export const DEFAULT_GAME_STAT: GameStat = {
+  day: 0,
+  cash: 5_000,
+  globalAlertLevel: 10,
 }

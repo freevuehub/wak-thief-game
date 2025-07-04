@@ -1,31 +1,28 @@
 import React from 'react'
 import { Money, Alert, Team, Loyalty } from '@/icons'
+import { useStore } from '@/hooks'
 
-interface HeaderProps {
-  cash: number
-  globalAlertLevel: number
-  thiefCount: number
-  averageLoyalty: number
-}
-
-const StatItem: React.FC<{
+type Props = {
   icon: React.ReactNode
   label: string
   value: string | number
-  colorClass: string
-}> = ({ icon, label, value, colorClass }) => (
+  className: string
+}
+
+const StatItem: React.FC<Props> = (props) => (
   <div
-    className={`flex items-center space-x-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700/50 ${colorClass}`}
+    className={`flex items-center space-x-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700/50 ${props.className}`}
   >
-    {icon}
     <div className="flex flex-col text-sm">
-      <span className="text-gray-400 uppercase text-xs font-bold">{label}</span>
-      <span className="font-bold text-base">{value}</span>
+      <span className="text-gray-400 uppercase text-xs font-bold">{props.label}</span>
+      <span className="font-bold text-base">{props.value}</span>
     </div>
   </div>
 )
 
-const Header: React.FC<HeaderProps> = ({ cash, globalAlertLevel, thiefCount, averageLoyalty }) => {
+const Header: React.FC = () => {
+  const { gameStat, thieves } = useStore()
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-gray-900/80 backdrop-blur-sm p-3 z-20 border-b border-gray-700">
       <div className="max-w-7xl mx-auto flex justify-between items-center space-x-4">
@@ -34,27 +31,27 @@ const Header: React.FC<HeaderProps> = ({ cash, globalAlertLevel, thiefCount, ave
           <StatItem
             icon={<Money className="w-6 h-6 text-green-400" />}
             label="자금"
-            value={`$${cash.toLocaleString()}`}
-            colorClass="text-green-300"
+            value={`$${gameStat.cash.toLocaleString()}`}
+            className="text-green-300"
           />
           <StatItem
             icon={<Alert className="w-6 h-6 text-yellow-400" />}
             label="경계"
-            value={`${Math.round(globalAlertLevel)}%`}
-            colorClass="text-yellow-300"
+            value={`${Math.round(gameStat.globalAlertLevel)}%`}
+            className="text-yellow-300"
           />
           <StatItem
             icon={<Team className="w-6 h-6 text-blue-400" />}
             label="조직원"
-            value={thiefCount}
-            colorClass="text-blue-300"
+            value={thieves.length}
+            className="text-blue-300"
           />
-          <StatItem
+          {/* <StatItem
             icon={<Loyalty className="w-6 h-6 text-pink-400" />}
             label="충성심"
-            value={`${Math.round(averageLoyalty)}%`}
+            value={`${Math.round(gameStat.averageLoyalty)}%`}
             colorClass="text-pink-300"
-          />
+          /> */}
         </div>
       </div>
     </header>

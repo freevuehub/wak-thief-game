@@ -5,5 +5,9 @@ export type Profile = {
 }
 
 export type Thief = Profile & {
-  dialogue: string[]
+  id: string
+  dialogue: Array<string>
+  character: string
+  loyalty: number
+  cost: number
 }
