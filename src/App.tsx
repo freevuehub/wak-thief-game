@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import Footer from './components/Footer'
-import { Thief, Dialog, StatCard, Side } from '@/components'
+import { Thief, Dialog, StatCard, Side, Map, Footer } from '@/components'
 import { useStore } from '@/hooks'
 
 const App: React.FC = () => {
@@ -16,13 +15,10 @@ const App: React.FC = () => {
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
         <Side />
         <StatCard />
-        <Footer
-          day={100}
-          onEndDay={() => {}}
-          isEndDayDisabled={false}
-          onToggleMap={() => {}}
-          onToggleNews={() => {}}
-        />
+        <div className="pl-[300px] pb-[70px] h-screen">
+          <Map />
+        </div>
+        <Footer />
       </div>
       {isDialogOpen && (
         <Dialog>

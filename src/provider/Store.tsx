@@ -130,6 +130,26 @@ const StoreProvider: React.FC<Props> = (props) => {
       loyalty: 0,
       cost: 0,
     },
+    {
+      id: 'l',
+      name: 'John Doe',
+      personality: 'John Doe',
+      background: 'John Doe',
+      dialogue: [],
+      character: '',
+      loyalty: 0,
+      cost: 0,
+    },
+    {
+      id: 'm',
+      name: 'John Doe',
+      personality: 'John Doe',
+      background: 'John Doe',
+      dialogue: [],
+      character: '',
+      loyalty: 0,
+      cost: 0,
+    },
   ])
   const [gameStat, setGameStat] = useState<GameStat>(DEFAULT_GAME_STAT)
 
