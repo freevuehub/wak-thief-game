@@ -13,10 +13,25 @@
       rel="stylesheet"
     />
     <style>
+      @font-face {
+        font-family: 'kdg_Medium';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/kdg_Light.woff')
+          format('woff');
+        font-weight: 300;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'kdg_Medium';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/kdg_Medium.woff')
+          format('woff');
+        font-weight: 500;
+        font-style: normal;
+      }
+
       body {
-        font-family: 'Roboto Mono', monospace;
+        font-family: 'kdg_Medium';
         background-color: #111827; /* bg-gray-900 */
-        /* Gritty texture overlay */
+        font-weight: 300;
         background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231F2937' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
         font-size: 16px; /* Increased base font size for comfort */
       }

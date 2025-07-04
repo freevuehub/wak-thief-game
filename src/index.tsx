@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { PromptProvider, AIProvider } from './provider'
+import { PromptProvider, AIProvider, StoreProvider } from './provider'
 
 const rootElement = document.getElementById('root')
 
@@ -15,7 +15,9 @@ root.render(
   <React.StrictMode>
     <PromptProvider>
       <AIProvider>
-        <App />
+        <StoreProvider>
+          <App />
+        </StoreProvider>
       </AIProvider>
     </PromptProvider>
   </React.StrictMode>

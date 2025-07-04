@@ -1,4 +1,4 @@
-import { ThiefAction } from './types'
+import { ThiefAction } from './legacyType'
 
 export const INITIAL_CASH = 5000
 export const RECRUITMENT_COST = 500
@@ -50,4 +50,8 @@ export const ACTION_RESPONSE_DIALOGUES: {
 
 export enum PROMPT_KEY {
   CREATE_THIEF = 'CREATE_PROFILE',
+  CREATE_PROFILE_IMAGE = 'CREATE_PROFILE_IMAGE',
+  REPORT = 'REPORT',
+  ACTIONS = 'ACTIONS',
+  NEWS = 'NEWS',
 }

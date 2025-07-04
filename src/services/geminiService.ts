@@ -1,18 +1,18 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { Thief, ThiefAction } from "../types";
-import { ACTION_DETAILS, ACTION_RESPONSE_DIALOGUES } from "../constants";
+import { GoogleGenAI, GenerateContentResponse } from '@google/genai'
+import { Thief, ThiefAction } from '../legacyType'
+import { ACTION_DETAILS, ACTION_RESPONSE_DIALOGUES } from '../constants'
 
 if (!process.env.GEMINI_API_KEY) {
-  throw new Error("API_KEY environment variable not set");
+  throw new Error('API_KEY environment variable not set')
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
 interface ThiefProfile {
-  name: string;
-  personality: string;
-  background: string;
-  dialogue: string[];
+  name: string
+  personality: string
+  background: string
+  dialogue: string[]
 }
 
 export const generateThiefProfile = async (
@@ -45,39 +45,39 @@ export const generateThiefProfile = async (
         "마지막 문장입니다."
       ]
     }
-  `;
+  `
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: 'gemini-2.5-flash-preview-04-17',
     contents: prompt,
     config: {
-      responseMimeType: "application/json",
+      responseMimeType: 'application/json',
     },
-  });
+  })
 
-  let jsonStr = response.text.trim();
-  const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
-  const match = jsonStr.match(fenceRegex);
+  let jsonStr = response.text.trim()
+  const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s
+  const match = jsonStr.match(fenceRegex)
   if (match && match[2]) {
-    jsonStr = match[2].trim();
+    jsonStr = match[2].trim()
   }
 
   try {
-    return JSON.parse(jsonStr) as ThiefProfile;
+    return JSON.parse(jsonStr) as ThiefProfile
   } catch (e) {
-    console.error("Failed to parse JSON from Gemini:", e);
+    console.error('Failed to parse JSON from Gemini:', e)
     return {
-      name: "John Doe",
-      personality: "Mysterious",
-      background: "Ex-spy",
+      name: 'John Doe',
+      personality: 'Mysterious',
+      background: 'Ex-spy',
       dialogue: [
-        "보스, 일을 하러 왔습니다.",
-        "시키는 건 뭐든지 하죠.",
-        "과거는 묻지 말아 주십시오.",
+        '보스, 일을 하러 왔습니다.',
+        '시키는 건 뭐든지 하죠.',
+        '과거는 묻지 말아 주십시오.',
       ],
-    };
+    }
   }
-};
+}
 
 export const generateThiefPortrait = async (
   name: string,
@@ -88,43 +88,43 @@ export const generateThiefPortrait = async (
     이 이미지의 아트 스타일, 색감, 조명, 구도를 분석해서 
     새로운 캐릭터 포트레이트를 그릴 때 참고할 수 있는 
     상세한 스타일 가이드를 만들어주세요.
-  `;
+  `
 
   // resource/image.png 파일을 Base64로 읽기
   // public 폴더의 이미지를 fetch로 가져와서 Base64로 변환
-  const imageResponse = await fetch("/resource/image2.png");
-  const imageBlob = await imageResponse.blob();
+  const imageResponse = await fetch('/resource/image2.png')
+  const imageBlob = await imageResponse.blob()
 
   const base64Image = await new Promise<string>((resolve) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onloadend = () => {
-      const base64 = reader.result as string;
-      resolve(base64.split(",")[1]); // data:image/png;base64, 부분 제거
-    };
-    reader.readAsDataURL(imageBlob);
-  });
+      const base64 = reader.result as string
+      resolve(base64.split(',')[1]) // data:image/png;base64, 부분 제거
+    }
+    reader.readAsDataURL(imageBlob)
+  })
 
   // Gemini Pro Vision으로 스타일 분석
   const visionResponse = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp", // 또는 "gemini-1.5-flash"
+    model: 'gemini-2.0-flash-exp', // 또는 "gemini-1.5-flash"
     contents: [
       {
-        role: "user",
+        role: 'user',
         parts: [
           { text: visionPrompt },
           {
             inlineData: {
-              mimeType: "image/png",
+              mimeType: 'image/png',
               data: base64Image,
             },
           },
         ],
       },
     ],
-  });
+  })
 
   // 분석된 스타일 정보를 바탕으로 Imagen 프롬프트 생성
-  const styleGuide = visionResponse.text || "";
+  const styleGuide = visionResponse.text || ''
 
   const prompt = `
     You are a character illustrator. Create a high-quality digital painting portrait of a character for a game. The visual style of the portrait should be **entirely dictated by the character's profile**.
@@ -153,27 +153,24 @@ export const generateThiefPortrait = async (
         -   **Framing:** Head-and-shoulders portrait.
         -   **Visibility:** The face and expression must be clear and fully visible. NO masks, NO heavy obscuring shadows.
         -   **Quality:** Clean, high-quality art. No text or watermarks.
-  `;
+  `
   const response = await ai.models.generateImages({
-    model: "imagen-3.0-generate-002",
+    model: 'imagen-3.0-generate-002',
     prompt: prompt,
-    config: { numberOfImages: 1, outputMimeType: "image/jpeg" },
-  });
+    config: { numberOfImages: 1, outputMimeType: 'image/jpeg' },
+  })
 
-  const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
-  return `data:image/jpeg;base64,${base64ImageBytes}`;
-};
+  const base64ImageBytes: string = response.generatedImages[0].image.imageBytes
+  return `data:image/jpeg;base64,${base64ImageBytes}`
+}
 
 interface DailyBriefing {
-  narration: string;
-  dialogue: string[];
+  narration: string
+  dialogue: string[]
 }
 
 export const generateDailyDialogue = async (
-  thief: Pick<
-    Thief,
-    "name" | "personality" | "background" | "condition" | "loyalty"
-  >,
+  thief: Pick<Thief, 'name' | 'personality' | 'background' | 'condition' | 'loyalty'>,
   eventSummary: string
 ): Promise<DailyBriefing> => {
   const prompt = `
@@ -199,36 +196,36 @@ export const generateDailyDialogue = async (
       "narration": "...",
       "dialogue": ["...", "...", "..."]
     }
-  `;
+  `
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: 'gemini-2.5-flash-preview-04-17',
     contents: prompt,
     config: {
-      responseMimeType: "application/json",
+      responseMimeType: 'application/json',
     },
-  });
+  })
 
   try {
-    let jsonStr = response.text.trim();
-    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
-    const match = jsonStr.match(fenceRegex);
+    let jsonStr = response.text.trim()
+    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s
+    const match = jsonStr.match(fenceRegex)
     if (match && match[2]) {
-      jsonStr = match[2].trim();
+      jsonStr = match[2].trim()
     }
-    return JSON.parse(jsonStr) as DailyBriefing;
+    return JSON.parse(jsonStr) as DailyBriefing
   } catch (e) {
-    console.error("Failed to parse dialogue JSON from Gemini:", e);
+    console.error('Failed to parse dialogue JSON from Gemini:', e)
     return {
       narration: `${thief.name}이/가 사무실 문을 열고 들어왔다.`,
-      dialogue: ["보고할 게 있습니다, 보스.", "어제는... 별일 없었습니다."],
-    };
+      dialogue: ['보고할 게 있습니다, 보스.', '어제는... 별일 없었습니다.'],
+    }
   }
-};
+}
 
 export const generateNewsReport = async (events: string[]): Promise<string> => {
   if (events.length === 0) {
-    return "어젯밤 도시는 조용했습니다. 너무나도 조용했죠.";
+    return '어젯밤 도시는 조용했습니다. 너무나도 조용했죠.'
   }
 
   const prompt = `
@@ -236,25 +233,25 @@ export const generateNewsReport = async (events: string[]): Promise<string> => {
     어젯밤 발생한 아래 사건들을 요약하는 짧고 드라마틱한 뉴스 방송을 작성해주세요.
     간결하게, 1940년대 누아르 스타일을 유지해야 합니다. 자극적인 묘사나 '지직' 같은 효과음은 빼주세요.
     사건들:
-    - ${events.join("\n- ")}
-  `;
+    - ${events.join('\n- ')}
+  `
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: 'gemini-2.5-flash-preview-04-17',
     contents: prompt,
     config: { thinkingConfig: { thinkingBudget: 0 } },
-  });
+  })
 
-  return response.text;
-};
+  return response.text
+}
 
 interface ActionResponse {
-  responseDialogue: string;
-  closingNarration: string;
+  responseDialogue: string
+  closingNarration: string
 }
 
 export const generateActionResponse = async (
-  thief: Pick<Thief, "name" | "personality" | "loyalty">,
+  thief: Pick<Thief, 'name' | 'personality' | 'loyalty'>,
   action: ThiefAction
 ): Promise<ActionResponse> => {
   const prompt = `
@@ -276,24 +273,24 @@ export const generateActionResponse = async (
       "responseDialogue": "...",
       "closingNarration": "..."
     }
-  `;
+  `
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-04-17",
+      model: 'gemini-2.5-flash-preview-04-17',
       contents: prompt,
       config: {
-        responseMimeType: "application/json",
+        responseMimeType: 'application/json',
       },
-    });
-    let jsonStr = response.text.trim();
-    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
-    const match = jsonStr.match(fenceRegex);
+    })
+    let jsonStr = response.text.trim()
+    const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s
+    const match = jsonStr.match(fenceRegex)
     if (match && match[2]) {
-      jsonStr = match[2].trim();
+      jsonStr = match[2].trim()
     }
-    return JSON.parse(jsonStr) as ActionResponse;
+    return JSON.parse(jsonStr) as ActionResponse
   } catch (e) {
-    console.error("Failed to generate action response:", e);
-    return ACTION_RESPONSE_DIALOGUES[action];
+    console.error('Failed to generate action response:', e)
+    return ACTION_RESPONSE_DIALOGUES[action]
   }
-};
+}

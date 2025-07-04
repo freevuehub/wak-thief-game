@@ -1,21 +1,10 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
-
-type Params = {
-  name: string
-  personality?: string
-  background?: string
-}
-type ThiefProfile = {
-  name: string
-  personality: string
-  background: string
-  dialogue: string[]
-}
+import type { Thief, Profile } from '@/types'
 
 const createThief =
   (prompt: string) =>
-  async (params: Params): Promise<ThiefProfile> => {
+  async (params: Profile): Promise<Thief> => {
     prompt = prompt.replace(/\$\{name\}/g, params.name)
     prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
     prompt = prompt.replace(/\$\{background\}/g, params.background || '')
@@ -33,7 +22,7 @@ const createThief =
     if (match && match[2]) jsonStr = match[2].trim()
 
     try {
-      return JSON.parse(jsonStr) as ThiefProfile
+      return JSON.parse(jsonStr) as Thief
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
