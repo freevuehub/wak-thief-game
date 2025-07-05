@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Thief, Dialog, StatCard, Side, Map, Footer } from '@/components'
+import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/components'
 import { useStore } from '@/hooks'
 
 const App: React.FC = () => {
-  const { thieves } = useStore()
+  const { thieves, thiefCreateLoading, selectedThief, setSelectedThief } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
@@ -23,6 +23,16 @@ const App: React.FC = () => {
       {isDialogOpen && (
         <Dialog>
           <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
+        </Dialog>
+      )}
+      {selectedThief && (
+        <Dialog onBackgroundClick={() => setSelectedThief(null)}>
+          <Thief.Report {...selectedThief} />
+        </Dialog>
+      )}
+      {thiefCreateLoading && (
+        <Dialog>
+          <Spinner />
         </Dialog>
       )}
     </>

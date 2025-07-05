@@ -1,12 +1,15 @@
 import { Thief } from '@/types'
+import { useStore } from '@/hooks'
 
 type Props = Thief
 
 const Profile: React.FC<Props> = (props) => {
+  const { setSelectedThief } = useStore()
+
   const onThiefClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    console.log(props)
+    setSelectedThief(props)
   }
 
   return (
@@ -16,7 +19,9 @@ const Profile: React.FC<Props> = (props) => {
       onClick={onThiefClick}
     >
       <div className="size-12 rounded-full bg-gray-700 overflow-hidden">
-        <img src={props.image} alt={props.name} className="size-full object-cover" />
+        {props.image && (
+          <img src={props.image} alt={props.name} className="size-full object-cover" />
+        )}
       </div>
       <div className="text-left">
         <h1 className="font-medium text-ms">{props.name}</h1>

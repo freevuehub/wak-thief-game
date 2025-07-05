@@ -3,12 +3,14 @@ import { thiefAI } from '@/lib'
 import { usePrompt } from '@/hooks'
 import { PROMPT_KEY } from '@/constants'
 import { pipe } from '@fxts/core'
-import { Profile, Thief, ImageParams } from '@/types'
+import { Profile, Thief, ImageParams, ThrowOutThiefParams, RestThiefParams } from '@/types'
 import { v4 as uuidv4 } from 'uuid'
 
 export const AIContext = createContext({
   createThief: (_: Profile) => new Promise<Thief>(() => {}),
   createThiefImage: (_: ImageParams) => new Promise<string>(() => {}),
+  throwOutThief: (_: ThrowOutThiefParams) => new Promise<{ dialogue: Array<string> }>(() => {}),
+  restThief: (_: RestThiefParams) => new Promise<{ dialogue: Array<string> }>(() => {}),
 })
 
 type Props = {
@@ -37,6 +39,20 @@ const AIProvider: React.FC<Props> = (props) => {
                 resolve(data)
               }
             )
+          })
+        },
+        throwOutThief: (params: ThrowOutThiefParams) => {
+          return new Promise<{ dialogue: Array<string> }>((resolve) => {
+            pipe(params, thiefAI.throwOutThief(prompt[PROMPT_KEY.THROW_OUT_THIEF].ko), (data) => {
+              resolve(data)
+            })
+          })
+        },
+        restThief: (params: RestThiefParams) => {
+          return new Promise<{ dialogue: Array<string> }>((resolve) => {
+            pipe(params, thiefAI.restThief(prompt[PROMPT_KEY.REST_THIEF].ko), (data) => {
+              resolve(data)
+            })
           })
         },
       }}

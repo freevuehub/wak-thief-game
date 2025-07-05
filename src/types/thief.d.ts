@@ -17,3 +17,23 @@ export type Thief = Profile & {
   loyalty: number
   cost: number
 }
+
+export type ThrowOutThiefParams = {
+  name: string
+  personality: string
+  character: string
+  background: string
+  cost: number
+  loyalty: number
+  event?: string
+}
+
+export type RestThiefParams = {
+  name: string
+  personality: string
+  character: string
+  background: string
+  cost: number
+  loyalty: number
+  event?: string
+}

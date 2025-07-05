@@ -55,6 +55,8 @@ export enum PROMPT_KEY {
   REPORT = 'REPORT',
   ACTIONS = 'ACTIONS',
   NEWS = 'NEWS',
+  THROW_OUT_THIEF = 'THROW_OUT_THIEF',
+  REST_THIEF = 'REST_THIEF',
 }
 
 export const DEFAULT_GAME_STAT: GameStat = {

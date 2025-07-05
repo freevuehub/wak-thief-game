@@ -4,9 +4,11 @@ import { useAI } from '@/hooks'
 import { DEFAULT_GAME_STAT } from '@/constants'
 
 export const StoreContext = createContext({
-  loading: true,
+  thiefCreateLoading: true,
   thieves: [] as Array<Thief>,
   gameStat: DEFAULT_GAME_STAT,
+  selectedThief: null as Thief | null,
+  setSelectedThief: (_: Thief | null) => {},
   setGameStat: (_: Record<keyof GameStat, GameStat[keyof GameStat]>) => {},
   createThief: (_: Profile) => new Promise(() => {}),
 })
@@ -18,153 +20,37 @@ type Props = {
 const StoreProvider: React.FC<Props> = (props) => {
   const { createThief, createThiefImage } = useAI()
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [thiefCreateLoading, setThiefCreateLoading] = useState<boolean>(false)
+  const [selectedThief, setSelectedThief] = useState<Thief | null>(null)
   const [thieves, setThieves] = useState<Array<Thief>>([
-    // {
-    //   id: 'a',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'b',
-    //   name: 'Jane Doe',
-    //   personality: 'Jane Doe',
-    //   background: 'Jane Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'c',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'd',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'e',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'f',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'g',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'h',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'i',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'j',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'k',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'l',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
-    // {
-    //   id: 'm',
-    //   name: 'John Doe',
-    //   personality: 'John Doe',
-    //   background: 'John Doe',
-    //   dialogue: [],
-    //   character: '',
-    //   loyalty: 0,
-    //   cost: 0,
-    // },
+    {
+      id: 'a',
+      name: '릴파',
+      personality: '목청이 좋음, 극E, 극P',
+      background: '어두운 게임을 좋아함.',
+      dialogue: ['릴파!!!!!', '요고랑, 조고랑', '봐줘잉~~'],
+      character: '목청이 좋은 외톨이',
+      loyalty: 100,
+      cost: 100,
+      image: '',
+    },
   ])
   const [gameStat, setGameStat] = useState<GameStat>(DEFAULT_GAME_STAT)
 
   return (
     <StoreContext.Provider
       value={{
-        loading,
+        thiefCreateLoading,
         thieves,
         gameStat,
+        selectedThief,
+        setSelectedThief,
         setGameStat: (value: Record<keyof GameStat, GameStat[keyof GameStat]>) => {
           setGameStat((prev) => ({ ...prev, ...value }))
         },
         createThief: async (data: Profile) => {
           try {
-            setLoading(true)
+            setThiefCreateLoading(true)
             const thief = await createThief(data)
             const image = await createThiefImage({
               character: thief.character,
@@ -175,7 +61,7 @@ const StoreProvider: React.FC<Props> = (props) => {
           } catch {
             alert('조직원 생성 중 오류가 발생했습니다. API 키를 확인하고 다시 시도해주세요.')
           } finally {
-            setLoading(false)
+            setThiefCreateLoading(false)
           }
         },
       }}
