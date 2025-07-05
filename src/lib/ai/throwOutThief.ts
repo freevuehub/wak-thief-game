@@ -1,10 +1,10 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
-import type { ThrowOutThiefParams } from '@/types'
+import type { ThrowOutThiefParams, ThrowOutThiefResponse } from '@/types'
 
 const throwOutThief =
   (prompt: string) =>
-  async (params: ThrowOutThiefParams): Promise<{ dialogue: Array<string> }> => {
+  async (params: ThrowOutThiefParams): Promise<ThrowOutThiefResponse> => {
     prompt = prompt.replace(/\$\{name\}/g, params.name)
     prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
     prompt = prompt.replace(/\$\{background\}/g, params.background || '')
@@ -26,7 +26,7 @@ const throwOutThief =
     if (match && match[2]) jsonStr = match[2].trim()
 
     try {
-      return JSON.parse(jsonStr) as { dialogue: Array<string> }
+      return JSON.parse(jsonStr) as ThrowOutThiefResponse
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
@@ -35,6 +35,9 @@ const throwOutThief =
           '다시 한번 기회를 주세요. 더 열심히 하겠습니다.',
           '이 조직에서 나가면 어디로 가야 할지 모르겠어요...',
         ],
+        feelings:
+          '보스에게 쫓겨날까봐 두렵고 불안한 마음이지만, 동시에 다시 기회를 얻고 싶은 간절한 희망도 있어요.',
+        accept: true,
       }
     }
   }

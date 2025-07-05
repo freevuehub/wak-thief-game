@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/components'
-import { useStore } from '@/hooks'
+import { useStore, useAI } from '@/hooks'
 
 const App: React.FC = () => {
+  const { aiLoading } = useAI()
   const { thieves, thiefCreateLoading, selectedThief, setSelectedThief } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
@@ -26,7 +27,11 @@ const App: React.FC = () => {
         </Dialog>
       )}
       {selectedThief && (
-        <Dialog onBackgroundClick={() => setSelectedThief(null)}>
+        <Dialog
+          onBackgroundClick={() => {
+            if (!aiLoading) setSelectedThief(null)
+          }}
+        >
           <Thief.Report {...selectedThief} />
         </Dialog>
       )}

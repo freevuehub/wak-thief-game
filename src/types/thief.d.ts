@@ -37,3 +37,13 @@ export type RestThiefParams = {
   loyalty: number
   event?: string
 }
+
+export type ThrowOutThiefResponse = {
+  dialogue: Array<string>
+  feelings: string
+}
+
+export type RestThiefResponse = {
+  dialogue: Array<string>
+  feelings: string
+}

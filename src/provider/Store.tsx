@@ -1,21 +1,29 @@
 import { createContext, useState } from 'react'
 import { Thief, Profile, GameStat } from '@/types'
 import { useAI } from '@/hooks'
-import { DEFAULT_GAME_STAT } from '@/constants'
+import { DEFAULT_GAME_STAT, PROMPT_KEY } from '@/constants'
+
+type Props = {
+  children: React.ReactNode
+}
+type GroupLog = {
+  day: number
+  message: string
+  type: PROMPT_KEY
+  thiefId?: string
+}
 
 export const StoreContext = createContext({
   thiefCreateLoading: true,
   thieves: [] as Array<Thief>,
   gameStat: DEFAULT_GAME_STAT,
   selectedThief: null as Thief | null,
+  groupLog: [] as Array<GroupLog>,
+  setGroupLog: (_: Array<GroupLog>) => {},
   setSelectedThief: (_: Thief | null) => {},
   setGameStat: (_: Record<keyof GameStat, GameStat[keyof GameStat]>) => {},
   createThief: (_: Profile) => new Promise(() => {}),
 })
-
-type Props = {
-  children: React.ReactNode
-}
 
 const StoreProvider: React.FC<Props> = (props) => {
   const { createThief, createThiefImage } = useAI()
@@ -36,6 +44,7 @@ const StoreProvider: React.FC<Props> = (props) => {
     },
   ])
   const [gameStat, setGameStat] = useState<GameStat>(DEFAULT_GAME_STAT)
+  const [groupLog, setGroupLog] = useState<Array<GroupLog>>([])
 
   return (
     <StoreContext.Provider
@@ -44,7 +53,11 @@ const StoreProvider: React.FC<Props> = (props) => {
         thieves,
         gameStat,
         selectedThief,
+        groupLog,
         setSelectedThief,
+        setGroupLog: (value: Array<GroupLog>) => {
+          setGroupLog((prev) => [...prev, ...value])
+        },
         setGameStat: (value: Record<keyof GameStat, GameStat[keyof GameStat]>) => {
           setGameStat((prev) => ({ ...prev, ...value }))
         },

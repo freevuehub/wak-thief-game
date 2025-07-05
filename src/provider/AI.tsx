@@ -3,15 +3,23 @@ import { thiefAI } from '@/lib'
 import { usePrompt } from '@/hooks'
 import { PROMPT_KEY } from '@/constants'
 import { pipe } from '@fxts/core'
-import { Profile, Thief, ImageParams, ThrowOutThiefParams, RestThiefParams } from '@/types'
+import type {
+  Profile,
+  Thief,
+  ImageParams,
+  ThrowOutThiefParams,
+  RestThiefParams,
+  ThrowOutThiefResponse,
+  RestThiefResponse,
+} from '@/types'
 import { v4 as uuidv4 } from 'uuid'
 
 export const AIContext = createContext({
   aiLoading: false,
   createThief: (_: Profile) => new Promise<Thief>(() => {}),
   createThiefImage: (_: ImageParams) => new Promise<string>(() => {}),
-  throwOutThief: (_: ThrowOutThiefParams) => new Promise<{ dialogue: Array<string> }>(() => {}),
-  restThief: (_: RestThiefParams) => new Promise<{ dialogue: Array<string> }>(() => {}),
+  throwOutThief: (_: ThrowOutThiefParams) => new Promise<ThrowOutThiefResponse>(() => {}),
+  restThief: (_: RestThiefParams) => new Promise<RestThiefResponse>(() => {}),
 })
 
 type Props = {
@@ -32,11 +40,10 @@ const AIProvider: React.FC<Props> = (props) => {
               setAiLoading(true)
               pipe(profile, thiefAI.createThief(prompt[PROMPT_KEY.CREATE_THIEF].ko), (data) => {
                 resolve({ ...data, id: uuidv4() })
+                setAiLoading(false)
               })
             } catch (error) {
               reject(error)
-            } finally {
-              setAiLoading(false)
             }
           })
         },
@@ -49,40 +56,37 @@ const AIProvider: React.FC<Props> = (props) => {
                 thiefAI.createThiefImage(prompt[PROMPT_KEY.CREATE_PROFILE_IMAGE].ko),
                 (data) => {
                   resolve(data)
+                  setAiLoading(false)
                 }
               )
             } catch (error) {
               reject(error)
-            } finally {
-              setAiLoading(false)
             }
           })
         },
         throwOutThief: (params: ThrowOutThiefParams) => {
-          return new Promise<{ dialogue: Array<string> }>((resolve, reject) => {
+          return new Promise<ThrowOutThiefResponse>((resolve, reject) => {
             try {
               setAiLoading(true)
               pipe(params, thiefAI.throwOutThief(prompt[PROMPT_KEY.THROW_OUT_THIEF].ko), (data) => {
                 resolve(data)
+                setAiLoading(false)
               })
             } catch (error) {
               reject(error)
-            } finally {
-              setAiLoading(false)
             }
           })
         },
         restThief: (params: RestThiefParams) => {
-          return new Promise<{ dialogue: Array<string> }>((resolve, reject) => {
+          return new Promise<RestThiefResponse>((resolve, reject) => {
             try {
               setAiLoading(true)
               pipe(params, thiefAI.restThief(prompt[PROMPT_KEY.REST_THIEF].ko), (data) => {
                 resolve(data)
+                setAiLoading(false)
               })
             } catch (error) {
               reject(error)
-            } finally {
-              setAiLoading(false)
             }
           })
         },

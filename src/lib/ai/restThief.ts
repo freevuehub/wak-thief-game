@@ -1,10 +1,10 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
-import type { RestThiefParams } from '@/types'
+import type { RestThiefParams, RestThiefResponse } from '@/types'
 
 const restThief =
   (prompt: string) =>
-  async (params: RestThiefParams): Promise<{ dialogue: Array<string> }> => {
+  async (params: RestThiefParams): Promise<RestThiefResponse> => {
     prompt = prompt.replace(/\$\{name\}/g, params.name)
     prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
     prompt = prompt.replace(/\$\{background\}/g, params.background || '')
@@ -26,15 +26,17 @@ const restThief =
     if (match && match[2]) jsonStr = match[2].trim()
 
     try {
-      return JSON.parse(jsonStr) as { dialogue: Array<string> }
+      return JSON.parse(jsonStr) as RestThiefResponse
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
         dialogue: [
-          '보스... 제가 뭘 잘못했나요?',
-          '다시 한번 기회를 주세요. 더 열심히 하겠습니다.',
-          '이 조직에서 나가면 어디로 가야 할지 모르겠어요...',
+          '보스, 휴식 시간을 주셔서 감사합니다.',
+          '잠시 쉬면서 다음 작전을 준비하겠습니다.',
+          '체력을 회복하고 더 좋은 성과를 내겠습니다.',
         ],
+        feelings: '휴식을 받아서 안도감이 들지만, 동시에 더 열심히 일해야겠다는 의지도 생겨요.',
+        accept: true,
       }
     }
   }
