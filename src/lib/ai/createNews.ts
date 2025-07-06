@@ -1,14 +1,13 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
-import type { Thief, Profile } from '@/types'
+import type { NewsParams, NewsResponse } from '@/types'
 import { GEMINI_MODELS } from '@/constants'
 
 const createNews =
   (prompt: string) =>
-  async (params: Profile): Promise<any> => {
-    prompt = prompt.replace(/\$\{name\}/g, params.name)
-    prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
-    prompt = prompt.replace(/\$\{background\}/g, params.background || '')
+  async (params: NewsParams): Promise<NewsResponse> => {
+    prompt = prompt.replace(/\$\{events\}/g, params.events)
+    prompt = prompt.replace(/\$\{oldEvents\}/g, params.oldEvents)
 
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: GEMINI_MODELS.FLASH_LIGHT,
@@ -23,18 +22,12 @@ const createNews =
     if (match && match[2]) jsonStr = match[2].trim()
 
     try {
-      return JSON.parse(jsonStr) as Thief
+      return JSON.parse(jsonStr) as NewsResponse
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
-        name: 'John Doe',
-        personality: 'Mysterious',
-        background: 'Ex-spy',
-        dialogue: [
-          '보스, 일을 하러 왔습니다.',
-          '시키는 건 뭐든지 하죠.',
-          '과거는 묻지 말아 주십시오.',
-        ],
+        main: [],
+        etc: [],
       }
     }
   }
