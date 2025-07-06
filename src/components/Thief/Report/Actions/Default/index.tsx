@@ -17,36 +17,10 @@ const Default: React.FC<Props> = (props) => {
 
   const onThrowOut = async () => {
     setActionType('THROW_OUT')
-    // try {
-    //   setLoading(true)
-    //   const { dialogue, feelings } = await throwOutThief(props)
-    //   createGroupLog({
-    //     day: stat.day,
-    //     message: feelings,
-    //     type: PROMPT_KEY.THROW_OUT_THIEF,
-    //     thiefId: props.id,
-    //   })
-    //   setLoading(false)
-    // } catch (error) {
-    //   alert('오류가 발생했습니다.')
-    // }
   }
 
   const onRest = async () => {
     setActionType('REST')
-    // try {
-    //   setLoading(true)
-    //   const { dialogue, feelings } = await restThief(props)
-    //   createGroupLog({
-    //     day: stat.day,
-    //     message: feelings,
-    //     type: PROMPT_KEY.REST_THIEF,
-    //     thiefId: props.id,
-    //   })
-    //   setLoading(false)
-    // } catch (error) {
-    //   alert('오류가 발생했습니다.')
-    // }
   }
 
   return (

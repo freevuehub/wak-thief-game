@@ -12,6 +12,7 @@ const Button: React.FC<Props> = (props) => {
           'rounded-lg',
           'p-2',
           'disabled:opacity-50',
+          'disabled:bg-gray-500',
           'disabled:cursor-not-allowed',
           props.className || '',
         ],
@@ -19,6 +20,7 @@ const Button: React.FC<Props> = (props) => {
       )}
       type="button"
       onClick={props.onClick}
+      value={props.value}
       disabled={props.disabled}
     >
       {props.children}

@@ -1,2 +1,2 @@
 export { default as Default } from './Default'
-export { default as Recruitment } from './Recruitment'
+export { default as Recruit } from './Recruit'

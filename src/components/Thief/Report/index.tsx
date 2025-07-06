@@ -29,7 +29,7 @@ const Report: React.FC<Props> = (props) => {
       {props.type === 'thief' ? (
         <Actions.Default {...props} onClose={props.onClose} />
       ) : (
-        <Actions.Recruitment {...props} />
+        <Actions.Recruit {...props} onClose={props.onClose} />
       )}
     </Card>
   )
