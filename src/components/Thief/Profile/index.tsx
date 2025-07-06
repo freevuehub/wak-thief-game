@@ -1,7 +1,9 @@
 import { Thief } from '@/types'
 import { useStore } from '@/hooks'
 
-type Props = Thief
+type Props = Thief & {
+  type: 'thief' | 'recruitment'
+}
 
 const Profile: React.FC<Props> = (props) => {
   const { setSelectedThief } = useStore()
@@ -9,7 +11,7 @@ const Profile: React.FC<Props> = (props) => {
   const onThiefClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    setSelectedThief(props)
+    setSelectedThief({ type: props.type, thief: props })
   }
 
   return (

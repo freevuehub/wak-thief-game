@@ -1,6 +1,7 @@
 import { useStore } from '@/hooks'
 import { pipe, toArray, map } from '@fxts/core'
 import { Thief } from '@/components'
+import { THIEF_SELECTED_TYPE } from '@/constants'
 
 type Props = {
   onCreateThief: () => void
@@ -17,7 +18,7 @@ const Side: React.FC<Props> = (props) => {
           <div className="p-4">영입중...</div>
         ) : (
           <div className="p-4">
-            <Thief.Profile {...createdThieves.thief} />
+            <Thief.Profile {...createdThieves.thief} type={THIEF_SELECTED_TYPE.RECRUITMENT} />
           </div>
         )
       ) : (
@@ -34,7 +35,9 @@ const Side: React.FC<Props> = (props) => {
       <ul className="flex flex-col gap-2 flex-1 overflow-y-auto p-4 scroll-smooth">
         {pipe(
           thieves,
-          map((thief) => <Thief.Profile key={thief.id} {...thief} />),
+          map((thief) => (
+            <Thief.Profile key={thief.id} {...thief} type={THIEF_SELECTED_TYPE.THIEF} />
+          )),
           toArray
         )}
       </ul>

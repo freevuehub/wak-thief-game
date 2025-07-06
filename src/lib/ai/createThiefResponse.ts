@@ -1,22 +1,25 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
-import type { Thief, Profile } from '@/types'
+import type { ThiefResponse, Thief } from '@/types'
 import { GEMINI_MODELS } from '@/constants'
 
-type ThiefResponse = Pick<
+type Params = Pick<
   Thief,
   'name' | 'personality' | 'background' | 'dialogue' | 'character' | 'cost' | 'loyalty' | 'fatigue'
 >
 
-const createThief =
+const createThiefResponse =
   (prompt: string) =>
-  async (params: Profile): Promise<ThiefResponse> => {
+  async (params: Params): Promise<ThiefResponse> => {
     prompt = prompt.replace(/\$\{name\}/g, params.name)
     prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
     prompt = prompt.replace(/\$\{background\}/g, params.background || '')
+    prompt = prompt.replace(/\$\{character\}/g, params.character || '')
+    prompt = prompt.replace(/\$\{cost\}/g, params.cost.toString() || '')
+    prompt = prompt.replace(/\$\{loyalty\}/g, params.loyalty.toString() || '')
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: GEMINI_MODELS.FLASH,
+      model: GEMINI_MODELS.FLASH_LIGHT,
       contents: prompt,
       config: { responseMimeType: 'application/json' },
     })
@@ -32,21 +35,10 @@ const createThief =
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
-        name: 'John Doe',
-        personality: 'Mysterious',
-        background: 'Ex-spy',
-        dialogue: [
-          '보스, 일을 하러 왔습니다.',
-          '시키는 건 뭐든지 하죠.',
-          '과거는 묻지 말아 주십시오.',
-        ],
-        character:
-          '보스에게 절대적인 충성을 바치는 조직원. 과거의 정체를 철저히 숨기며, 명령에 무조건 복종하는 신뢰할 수 있는 부하.',
-        cost: 100,
-        loyalty: 50,
-        fatigue: 0,
+        dialogue: [],
+        feelings: '',
       }
     }
   }
 
-export default createThief
+export default createThiefResponse

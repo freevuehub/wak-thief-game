@@ -16,6 +16,7 @@ export type Thief = Profile & {
   character: string
   loyalty: number
   cost: number
+  fatigue: number
 }
 
 export type ThrowOutThiefParams = {
@@ -38,12 +39,11 @@ export type RestThiefParams = {
   event?: string
 }
 
-export type ThrowOutThiefResponse = {
+type ThiefResponse = {
   dialogue: Array<string>
   feelings: string
 }
 
-export type RestThiefResponse = {
-  dialogue: Array<string>
-  feelings: string
-}
+export type ThrowOutThiefResponse = ThiefResponse
+export type RestThiefResponse = ThiefResponse
+export type RecreateThiefResponse = ThiefResponse

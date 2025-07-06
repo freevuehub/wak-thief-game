@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/components'
 import { useStore, useAI } from '@/hooks'
+import { THIEF_SELECTED_TYPE } from '@/constants'
 
 const App: React.FC = () => {
   const { aiLoading } = useAI()
@@ -30,16 +31,16 @@ const App: React.FC = () => {
           <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
         </Dialog>
       )}
-      {selectedThief && (
+      {selectedThief.thief && (
         <Dialog
           onBackgroundClick={() => {
-            if (!aiLoading) setSelectedThief(null)
+            if (!aiLoading) setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: null })
           }}
         >
-          <Thief.Report {...selectedThief} />
+          <Thief.Report {...selectedThief.thief} type={selectedThief.type} />
         </Dialog>
       )}
-      {false && (
+      {storeLoading.createNews && (
         <Dialog>
           <div className="h-screen flex items-center justify-center">
             <Spinner />

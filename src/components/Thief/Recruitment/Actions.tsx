@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Typewriter, Spinner } from '@/components'
 import { concat, join, pipe } from '@fxts/core'
-import { useAI, useStore } from '@/hooks'
+import { usePrompt } from '@/hooks'
 import type { Thief } from '@/types'
-import { PROMPT_KEY, THIEF_SELECTED_TYPE } from '@/constants'
+import { PROMPT_KEY } from '@/constants'
+import { syndicateAI } from '@/lib'
 
 type Props = Thief
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -32,39 +33,23 @@ const Button: React.FC<ButtonProps> = (props) => {
   )
 }
 const Actions: React.FC<Props> = (props) => {
-  const { throwOutThief, restThief, aiLoading } = useAI()
-  const { setSelectedThief, setGroupLog, gameStat } = useStore()
+  // const { setSelectedThief, setGroupLog, gameStat } = useStore()
+  const { prompt } = usePrompt()
+  const [loading, setLoading] = useState(false)
   const report = useRef<HTMLDivElement>(null)
 
-  const onThrowOut = async () => {
+  const onRecruitment = async () => {
     try {
-      const { dialogue, feelings } = await throwOutThief(props)
-      setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: { ...props, dialogue } })
-      setGroupLog([
-        {
-          day: gameStat.day,
-          message: feelings,
-          type: PROMPT_KEY.THROW_OUT_THIEF,
-          thiefId: props.id,
-        },
-      ])
+      pipe(prompt[PROMPT_KEY.RECRUITMENT_THIEF].ko, syndicateAI.createThiefResponse, (data) => {
+        console.log(data)
+      })
     } catch (error) {
       alert('오류가 발생했습니다.')
     }
   }
 
-  const onRest = async () => {
+  const onRecreate = async () => {
     try {
-      const { dialogue, feelings } = await restThief(props)
-      setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: { ...props, dialogue } })
-      setGroupLog([
-        {
-          day: gameStat.day,
-          message: feelings,
-          type: PROMPT_KEY.REST_THIEF,
-          thiefId: props.id,
-        },
-      ])
     } catch (error) {
       alert('오류가 발생했습니다.')
     }
@@ -84,11 +69,11 @@ const Actions: React.FC<Props> = (props) => {
           ref={report}
           className={pipe(
             ['bg-gray-700', 'rounded-lg', 'h-40', 'overflow-y-auto', 'p-2'],
-            concat(aiLoading ? ['flex', 'items-center', 'justify-center'] : []),
+            concat(loading ? ['flex', 'items-center', 'justify-center'] : []),
             join(' ')
           )}
         >
-          {aiLoading ? (
+          {loading ? (
             <Spinner />
           ) : (
             <Typewriter className="w-full whitespace-pre-wrap leading-loose">
@@ -101,29 +86,19 @@ const Actions: React.FC<Props> = (props) => {
         <li className="flex-1">
           <Button
             className="hover:bg-yellow-500 bg-yellow-500/70"
-            disabled={aiLoading}
-            onClick={onRest}
+            disabled={loading}
+            onClick={onRecreate}
           >
-            휴식
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button className="hover:bg-green-500 bg-green-500/70" disabled={aiLoading}>
-            탐색
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button className="hover:bg-blue-500 bg-blue-500/70" disabled={aiLoading}>
-            업무
+            재탐색
           </Button>
         </li>
         <li className="flex-1">
           <Button
             className="hover:bg-red-500 bg-red-500/70"
-            disabled={aiLoading}
-            onClick={onThrowOut}
+            disabled={loading}
+            onClick={onRecruitment}
           >
-            퇴출
+            영입
           </Button>
         </li>
       </ul>

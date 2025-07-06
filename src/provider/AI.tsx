@@ -1,5 +1,5 @@
 import { createContext, useState } from 'react'
-import { thiefAI } from '@/lib'
+import { syndicateAI } from '@/lib'
 import { usePrompt } from '@/hooks'
 import { PROMPT_KEY } from '@/constants'
 import { pipe } from '@fxts/core'
@@ -20,7 +20,18 @@ export const AIContext = createContext({
   aiLoading: false,
   createThief: (_: Profile) =>
     new Promise<
-      Pick<Thief, 'name' | 'personality' | 'background' | 'dialogue' | 'character' | 'id'>
+      Pick<
+        Thief,
+        | 'name'
+        | 'personality'
+        | 'background'
+        | 'dialogue'
+        | 'character'
+        | 'id'
+        | 'cost'
+        | 'loyalty'
+        | 'fatigue'
+      >
     >(() => {}),
   createThiefImage: (_: ImageParams) => new Promise<string>(() => {}),
   throwOutThief: (_: ThrowOutThiefParams) => new Promise<ThrowOutThiefResponse>(() => {}),
@@ -42,11 +53,22 @@ const AIProvider: React.FC<Props> = (props) => {
         aiLoading,
         createThief: (profile: Profile) => {
           return new Promise<
-            Pick<Thief, 'name' | 'personality' | 'background' | 'dialogue' | 'character' | 'id'>
+            Pick<
+              Thief,
+              | 'name'
+              | 'personality'
+              | 'background'
+              | 'dialogue'
+              | 'character'
+              | 'id'
+              | 'cost'
+              | 'loyalty'
+              | 'fatigue'
+            >
           >((resolve, reject) => {
             try {
               setAiLoading(true)
-              pipe(profile, thiefAI.createThief(prompt[PROMPT_KEY.CREATE_THIEF].ko), (data) => {
+              pipe(profile, syndicateAI.createThief(prompt[PROMPT_KEY.CREATE_THIEF].ko), (data) => {
                 resolve({ ...data, id: uuidv4() })
                 setAiLoading(false)
               })
@@ -61,7 +83,7 @@ const AIProvider: React.FC<Props> = (props) => {
               setAiLoading(true)
               pipe(
                 params,
-                thiefAI.createThiefImage(prompt[PROMPT_KEY.CREATE_PROFILE_IMAGE].ko),
+                syndicateAI.createThiefImage(prompt[PROMPT_KEY.CREATE_PROFILE_IMAGE].ko),
                 (data) => {
                   resolve(data)
                   setAiLoading(false)
@@ -76,10 +98,14 @@ const AIProvider: React.FC<Props> = (props) => {
           return new Promise<ThrowOutThiefResponse>((resolve, reject) => {
             try {
               setAiLoading(true)
-              pipe(params, thiefAI.throwOutThief(prompt[PROMPT_KEY.THROW_OUT_THIEF].ko), (data) => {
-                resolve(data)
-                setAiLoading(false)
-              })
+              pipe(
+                params,
+                syndicateAI.throwOutThief(prompt[PROMPT_KEY.THROW_OUT_THIEF].ko),
+                (data) => {
+                  resolve(data)
+                  setAiLoading(false)
+                }
+              )
             } catch (error) {
               reject(error)
             }
@@ -89,7 +115,7 @@ const AIProvider: React.FC<Props> = (props) => {
           return new Promise<RestThiefResponse>((resolve, reject) => {
             try {
               setAiLoading(true)
-              pipe(params, thiefAI.restThief(prompt[PROMPT_KEY.REST_THIEF].ko), (data) => {
+              pipe(params, syndicateAI.restThief(prompt[PROMPT_KEY.REST_THIEF].ko), (data) => {
                 resolve(data)
                 setAiLoading(false)
               })
@@ -102,7 +128,7 @@ const AIProvider: React.FC<Props> = (props) => {
           return new Promise<NewsResponse>((resolve, reject) => {
             try {
               setAiLoading(true)
-              pipe(params, thiefAI.createNews(prompt[PROMPT_KEY.CREATE_NEWS].ko), (data) => {
+              pipe(params, syndicateAI.createNews(prompt[PROMPT_KEY.CREATE_NEWS].ko), (data) => {
                 resolve(data)
                 setAiLoading(false)
               })

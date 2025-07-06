@@ -57,6 +57,7 @@ export enum PROMPT_KEY {
   CREATE_NEWS = 'CREATE_NEWS',
   THROW_OUT_THIEF = 'THROW_OUT_THIEF',
   REST_THIEF = 'REST_THIEF',
+  RECRUITMENT_THIEF = 'RECRUITMENT_THIEF',
 }
 
 export const DEFAULT_GAME_STAT: GameStat = {
@@ -69,4 +70,9 @@ export const GEMINI_MODELS = {
   FLASH_LIGHT: 'gemini-2.5-flash-lite-preview-06-17',
   FLASH: 'gemini-2.5-flash',
   IMAGE: 'imagen-3.0-generate-002',
+}
+
+export enum THIEF_SELECTED_TYPE {
+  THIEF = 'thief',
+  RECRUITMENT = 'recruitment',
 }

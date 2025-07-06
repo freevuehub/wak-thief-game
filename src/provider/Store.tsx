@@ -17,21 +17,24 @@ export const StoreContext = createContext({
   storeLoading: { createThief: false, createNews: false } as Record<string, boolean>,
   thieves: [] as Array<Thief>,
   gameStat: DEFAULT_GAME_STAT,
-  selectedThief: null as Thief | null,
+  selectedThief: { type: 'thief', thief: null } as {
+    type: 'thief' | 'recruitment'
+    thief: Thief | null
+  },
   groupLog: [] as Array<GroupLog>,
   createdThieves: null as {
     thief: Thief | null
     day: number
   } | null,
   setGroupLog: (_: Array<GroupLog>) => {},
-  setSelectedThief: (_: Thief | null) => {},
+  setSelectedThief: (_: { type: 'thief' | 'recruitment'; thief: Thief | null }) => {},
   setGameStat: (_: Record<keyof GameStat, GameStat[keyof GameStat]>) => {},
   createThief: (_: Profile) => new Promise(() => {}),
   updateDays: () => {},
 })
 
 const StoreProvider: React.FC<Props> = (props) => {
-  const { createThief, createThiefImage } = useAI()
+  const { createThief, createThiefImage, createNews } = useAI()
 
   const [storeLoading, setStoreLoading] = useState<Record<string, boolean>>({
     createThief: false,
@@ -42,7 +45,10 @@ const StoreProvider: React.FC<Props> = (props) => {
     thief: Thief | null
     day: number
   } | null>(null)
-  const [selectedThief, setSelectedThief] = useState<Thief | null>(null)
+  const [selectedThief, setSelectedThief] = useState<{
+    type: 'thief' | 'recruitment'
+    thief: Thief | null
+  }>({ type: 'thief', thief: null })
   const [thieves, setThieves] = useState<Array<Thief>>([
     // {
     //   id: 'a',
@@ -95,13 +101,18 @@ const StoreProvider: React.FC<Props> = (props) => {
             setStoreLoading((prev) => ({ ...prev, createThief: false }))
           }
         },
-        updateDays: () => {
+        updateDays: async () => {
           setStoreLoading((prev) => ({ ...prev, createNews: true }))
+
+          const news = await createNews({
+            events: '',
+            oldEvents: '',
+          })
           setGameStat((prev) => ({ ...prev, day: prev.day + 1 }))
 
-          setTimeout(() => {
-            setStoreLoading((prev) => ({ ...prev, createNews: false }))
-          }, 4000)
+          console.log(news)
+
+          setStoreLoading((prev) => ({ ...prev, createNews: false }))
         },
       }}
     >

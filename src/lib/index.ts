@@ -1,1 +1,1 @@
-export * as thiefAI from './ai'
+export * as syndicateAI from './ai'

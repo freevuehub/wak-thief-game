@@ -1,13 +1,10 @@
 import { Card } from '@/components'
 import type { Thief } from '@/types'
 import Actions from './Actions'
-import RecruitmentActions from './RecruitmentActions'
 
-type Props = Thief & {
-  type: 'thief' | 'recruitment'
-}
+type Props = Thief
 
-const Report: React.FC<Props> = (props) => {
+const Recruitment: React.FC<Props> = (props) => {
   return (
     <Card className="shadow-2xl w-full max-w-xs w-screen py-4">
       <ul className="flex px-4 mb-4">
@@ -26,9 +23,9 @@ const Report: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-2 items-center justify-center px-4">
         <p className="text-xl truncate w-full text-center">{props.name}</p>
       </div>
-      {props.type === 'thief' ? <Actions {...props} /> : <RecruitmentActions {...props} />}
+      <Actions {...props} />
     </Card>
   )
 }
 
-export default Report
+export default Recruitment
