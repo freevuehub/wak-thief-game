@@ -81,3 +81,16 @@ export enum THIEF_SELECTED_TYPE {
   THIEF = 'thief',
   RECRUITMENT = 'recruitment',
 }
+
+export enum THIEF_STATUS {
+  IDLE = 'idle',
+  WORKING = 'working',
+  RESTING = 'resting',
+}
+
+export enum THIEF_TEAM {
+  OUR = 'our',
+  ENEMY = 'enemy',
+  POLICE = 'police',
+  NEUTRAL = 'neutral',
+}

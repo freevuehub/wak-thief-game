@@ -1,14 +1,20 @@
 import React, { useState } from 'react'
 import { Profile } from '@/types'
-import { useStore } from '@/hooks'
+import { usePrompt, useStore } from '@/hooks'
 import { Card } from '@/components'
+import { syndicateAI } from '@/lib'
+import { v4 as uuidv4 } from 'uuid'
+import { pipe } from '@fxts/core'
+import { replacePrompt } from '@/lib'
+import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
 
 type Props = {
   onSubmit: () => void
 }
 
 const Create: React.FC<Props> = (props) => {
-  const { createThief, loading } = useStore()
+  const { prompt } = usePrompt()
+  const { createThief, updateLoading } = useStore()
   const [data, setData] = useState<Profile>({
     name: '',
     personality: '',
@@ -21,8 +27,31 @@ const Create: React.FC<Props> = (props) => {
     setData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const onSubmit = () => {
-    createThief(data)
+  const onSubmit = async () => {
+    updateLoading({ createThief: true })
+    pipe(
+      data,
+      replacePrompt(prompt[PROMPT_KEY.CREATE_THIEF].ko),
+      syndicateAI.createThief,
+      async (data) => ({
+        ...data,
+        id: uuidv4(),
+        status: THIEF_STATUS.IDLE,
+        team: THIEF_TEAM.OUR,
+        image: await pipe(
+          {
+            character: data.character,
+            background: data.background,
+          },
+          replacePrompt(prompt[PROMPT_KEY.CREATE_PROFILE_IMAGE].ko),
+          syndicateAI.createThiefImage
+        ),
+      }),
+      (data) => {
+        createThief(data)
+        updateLoading({ createThief: false })
+      }
+    )
 
     props.onSubmit()
 

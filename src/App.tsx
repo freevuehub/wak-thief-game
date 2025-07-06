@@ -5,7 +5,7 @@ import { THIEF_SELECTED_TYPE } from '@/constants'
 
 const App: React.FC = () => {
   const { aiLoading } = useAI()
-  const { thieves, storeLoading, selectedThief, setSelectedThief } = useStore()
+  const { thieves, storeLoading } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
@@ -17,9 +17,9 @@ const App: React.FC = () => {
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
         <Side onCreateThief={() => setIsDialogOpen(true)} />
         <StatCard />
-        <div className="pl-[300px] pb-[70px] h-screen">
+        {/* <div className="pl-[300px] pb-[70px] h-screen">
           <Map />
-        </div>
+        </div> */}
         <Footer />
       </div>
       {isDialogOpen && (
@@ -29,15 +29,6 @@ const App: React.FC = () => {
           }}
         >
           <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
-        </Dialog>
-      )}
-      {selectedThief.thief && (
-        <Dialog
-          onBackgroundClick={() => {
-            if (!aiLoading) setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: null })
-          }}
-        >
-          <Thief.Report {...selectedThief.thief} type={selectedThief.type} />
         </Dialog>
       )}
       {storeLoading.createNews && (

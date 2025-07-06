@@ -2,7 +2,7 @@ import { Card } from '@/components'
 import { useStore } from '@/hooks'
 
 const StatCard: React.FC = () => {
-  const { gameStat } = useStore()
+  const { stat } = useStore()
 
   return (
     <Card className="fixed top-4 right-4 max-w-md p-4">
@@ -10,13 +10,13 @@ const StatCard: React.FC = () => {
         <li>
           <p className="flex gap-2 text-md">
             <span>자금:</span>
-            <span className="font-medium text-green-400">${gameStat.cash.toLocaleString()}</span>
+            <span className="font-medium text-green-400">${stat.cash.toLocaleString()}</span>
           </p>
         </li>
         <li>
           <p className="flex gap-2 text-md">
             <span>경계:</span>
-            <span className="font-medium text-yellow-400">{gameStat.globalAlertLevel}</span>
+            <span className="font-medium text-yellow-400">{stat.globalAlertLevel}</span>
           </p>
         </li>
       </ul>

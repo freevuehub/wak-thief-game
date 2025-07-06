@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { Typewriter, Spinner } from '@/components'
-import { concat, join, pipe } from '@fxts/core'
+import { Thief } from '@/components'
+import { pipe } from '@fxts/core'
 import { useAI, usePrompt, useStore } from '@/hooks'
-import type { Thief } from '@/types'
-import { PROMPT_KEY, THIEF_SELECTED_TYPE } from '@/constants'
+import type { Thief as ThiefType } from '@/types'
+import { PROMPT_KEY } from '@/constants'
 import { syndicateAI } from '@/lib'
 import Button from '../Button'
 
-type Props = Thief
+type Props = ThiefType
 
 const Default: React.FC<Props> = (props) => {
   const { throwOutThief, restThief } = useAI()
-  const { setSelectedThief, setGroupLog, gameStat } = useStore()
+  const { createGroupLog, stat } = useStore()
   const { prompt } = usePrompt()
   const [loading, setLoading] = useState(false)
   const [dialogue, setDialogue] = useState<Array<string>>([])
@@ -21,16 +21,12 @@ const Default: React.FC<Props> = (props) => {
     try {
       setLoading(true)
       const { dialogue, feelings } = await throwOutThief(props)
-      setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: { ...props } })
-      setDialogue(dialogue)
-      setGroupLog([
-        {
-          day: gameStat.day,
-          message: feelings,
-          type: PROMPT_KEY.THROW_OUT_THIEF,
-          thiefId: props.id,
-        },
-      ])
+      createGroupLog({
+        day: stat.day,
+        message: feelings,
+        type: PROMPT_KEY.THROW_OUT_THIEF,
+        thiefId: props.id,
+      })
       setLoading(false)
     } catch (error) {
       alert('오류가 발생했습니다.')
@@ -41,75 +37,44 @@ const Default: React.FC<Props> = (props) => {
     try {
       setLoading(true)
       const { dialogue, feelings } = await restThief(props)
-      setSelectedThief({ type: THIEF_SELECTED_TYPE.THIEF, thief: { ...props } })
-      setDialogue(dialogue)
-      setGroupLog([
-        {
-          day: gameStat.day,
-          message: feelings,
-          type: PROMPT_KEY.REST_THIEF,
-          thiefId: props.id,
-        },
-      ])
+      createGroupLog({
+        day: stat.day,
+        message: feelings,
+        type: PROMPT_KEY.REST_THIEF,
+        thiefId: props.id,
+      })
       setLoading(false)
     } catch (error) {
       alert('오류가 발생했습니다.')
     }
   }
-  useEffect(() => {
-    if (dialogue.length > 0) return
-
-    setLoading(true)
-    pipe(props, syndicateAI.createThiefResponse(prompt[PROMPT_KEY.TALK_THIEF].ko), (data) => {
-      setSelectedThief({
-        type: THIEF_SELECTED_TYPE.THIEF,
-        thief: { ...props },
-      })
-      setDialogue(data.dialogue)
-      setLoading(false)
-    })
-  }, [dialogue])
 
   return (
     <>
       <div className="px-4 my-4">
-        <div
-          ref={report}
-          className={pipe(
-            ['bg-gray-700', 'rounded-lg', 'h-40', 'overflow-y-auto', 'p-2'],
-            concat(loading ? ['flex', 'items-center', 'justify-center'] : []),
-            join(' ')
-          )}
-        >
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Typewriter className="w-full whitespace-pre-wrap leading-loose">
-              {join('\n', dialogue)}
-            </Typewriter>
-          )}
-        </div>
+        <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.TALK_THIEF].ko}>
+          <ul className="flex justify-center gap-2">
+            <li className="flex-1">
+              <Button
+                className="hover:bg-red-500 bg-red-500/70"
+                disabled={loading}
+                onClick={onThrowOut}
+              >
+                퇴출
+              </Button>
+            </li>
+            <li className="flex-1">
+              <Button
+                className="hover:bg-yellow-500 bg-yellow-500/70"
+                disabled={loading}
+                onClick={onRest}
+              >
+                휴식
+              </Button>
+            </li>
+          </ul>
+        </Thief.Talk>
       </div>
-      <ul className="flex justify-center gap-2 px-4">
-        <li className="flex-1">
-          <Button
-            className="hover:bg-red-500 bg-red-500/70"
-            disabled={loading}
-            onClick={onThrowOut}
-          >
-            퇴출
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button
-            className="hover:bg-yellow-500 bg-yellow-500/70"
-            disabled={loading}
-            onClick={onRest}
-          >
-            휴식
-          </Button>
-        </li>
-      </ul>
     </>
   )
 }

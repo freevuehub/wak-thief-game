@@ -3,10 +3,10 @@ import { Calendar, News } from '@/icons'
 import { useStore } from '@/hooks'
 
 const Footer: React.FC = () => {
-  const { gameStat, updateDays } = useStore()
+  const { stat } = useStore()
 
   const onDayEnd = () => {
-    updateDays()
+    // updateDays()
   }
 
   return (
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <Calendar className="w-6 h-6 text-gray-400" />
-          <span className="text-xl font-bold">{gameStat.day}일차</span>
+          <span className="text-xl font-bold">{stat.day}일차</span>
         </div>
         <button
           onClick={onDayEnd}

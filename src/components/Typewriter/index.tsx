@@ -5,6 +5,7 @@ type Props = {
   children: string
   className?: string
   speed?: number
+  onEnded?: () => void
 }
 
 const Typewriter: React.FC<Props> = (props) => {
@@ -23,6 +24,7 @@ const Typewriter: React.FC<Props> = (props) => {
       } else {
         interval.current && clearInterval(interval.current)
         setIsTyping(false)
+        props.onEnded?.()
       }
     }, props.speed || 30)
 

@@ -12,6 +12,7 @@ type Props = {
 
 const Talk: React.FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(true)
+  const [isEnded, setIsEnded] = useState(false)
   const [dialogue, setDialogue] = useState<Array<string>>([])
 
   useEffect(() => {
@@ -30,8 +31,8 @@ const Talk: React.FC<Props> = (props) => {
         </div>
       ) : (
         <>
-          <Typewriter>{join('\n', dialogue)}</Typewriter>
-          {props.children}
+          <Typewriter onEnded={() => setIsEnded(true)}>{join('\n', dialogue)}</Typewriter>
+          {isEnded && props.children}
         </>
       )}
     </div>
