@@ -5,34 +5,11 @@ import { useAI, usePrompt, useStore } from '@/hooks'
 import type { Thief } from '@/types'
 import { PROMPT_KEY, THIEF_SELECTED_TYPE } from '@/constants'
 import { syndicateAI } from '@/lib'
+import Button from '../Button'
 
 type Props = Thief
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
-const Button: React.FC<ButtonProps> = (props) => {
-  return (
-    <button
-      className={pipe(
-        [
-          'block',
-          'w-full',
-          'rounded-lg',
-          'p-2',
-          'disabled:opacity-50',
-          'disabled:cursor-not-allowed',
-          props.className || '',
-        ],
-        join(' ')
-      )}
-      type="button"
-      onClick={props.onClick}
-      disabled={props.disabled}
-    >
-      {props.children}
-    </button>
-  )
-}
-const Actions: React.FC<Props> = (props) => {
+const Default: React.FC<Props> = (props) => {
   const { throwOutThief, restThief } = useAI()
   const { setSelectedThief, setGroupLog, gameStat } = useStore()
   const { prompt } = usePrompt()
@@ -116,25 +93,6 @@ const Actions: React.FC<Props> = (props) => {
       <ul className="flex justify-center gap-2 px-4">
         <li className="flex-1">
           <Button
-            className="hover:bg-yellow-500 bg-yellow-500/70"
-            disabled={loading}
-            onClick={onRest}
-          >
-            휴식
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button className="hover:bg-green-500 bg-green-500/70" disabled={loading}>
-            탐색
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button className="hover:bg-blue-500 bg-blue-500/70" disabled={loading}>
-            업무
-          </Button>
-        </li>
-        <li className="flex-1">
-          <Button
             className="hover:bg-red-500 bg-red-500/70"
             disabled={loading}
             onClick={onThrowOut}
@@ -142,9 +100,18 @@ const Actions: React.FC<Props> = (props) => {
             퇴출
           </Button>
         </li>
+        <li className="flex-1">
+          <Button
+            className="hover:bg-yellow-500 bg-yellow-500/70"
+            disabled={loading}
+            onClick={onRest}
+          >
+            휴식
+          </Button>
+        </li>
       </ul>
     </>
   )
 }
 
-export default Actions
+export default Default

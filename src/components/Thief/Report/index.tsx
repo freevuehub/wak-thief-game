@@ -1,7 +1,6 @@
 import { Card } from '@/components'
 import type { Thief } from '@/types'
-import Actions from './Actions'
-import RecruitmentActions from './RecruitmentActions'
+import * as Actions from './Actions'
 
 type Props = Thief & {
   type: 'thief' | 'recruitment'
@@ -26,7 +25,7 @@ const Report: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-2 items-center justify-center px-4">
         <p className="text-xl truncate w-full text-center">{props.name}</p>
       </div>
-      {props.type === 'thief' ? <Actions {...props} /> : <RecruitmentActions {...props} />}
+      {props.type === 'thief' ? <Actions.Default {...props} /> : <Actions.Recruitment {...props} />}
     </Card>
   )
 }
