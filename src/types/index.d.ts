@@ -1,4 +1,5 @@
 export * from './thief'
+export * from './map'
 
 export type GameStat = {
   day: number

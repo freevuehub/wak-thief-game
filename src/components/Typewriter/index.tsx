@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { pipe, join } from '@fxts/core'
 
 type Props = {
   children: string
@@ -32,7 +33,12 @@ const Typewriter: React.FC<Props> = (props) => {
   }, [props.children, props.speed])
 
   return (
-    <p className={props.className || ''}>
+    <p
+      className={pipe(
+        [props.className || '', 'whitespace-pre-wrap leading-loose', 'break-keep'],
+        join(' ')
+      )}
+    >
       {displayText}
       {isTyping && <span className="animate-pulse">|</span>}
     </p>
