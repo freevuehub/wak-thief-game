@@ -4,6 +4,7 @@ import * as Actions from './Actions'
 
 type Props = Thief & {
   type: 'thief' | 'recruitment'
+  onClose: () => void
 }
 
 const Report: React.FC<Props> = (props) => {
@@ -25,7 +26,11 @@ const Report: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-2 items-center justify-center px-4">
         <p className="text-xl truncate w-full text-center">{props.name}</p>
       </div>
-      {props.type === 'thief' ? <Actions.Default {...props} /> : <Actions.Recruitment {...props} />}
+      {props.type === 'thief' ? (
+        <Actions.Default {...props} onClose={props.onClose} />
+      ) : (
+        <Actions.Recruitment {...props} />
+      )}
     </Card>
   )
 }

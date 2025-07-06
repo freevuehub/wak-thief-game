@@ -7,5 +7,6 @@ export { default as Side } from './Side'
 export { default as Map } from './Map'
 export { default as Spinner } from './Spinner'
 export { default as Typewriter } from './Typewriter'
+export { default as Button } from './Button'
 
 export * as Thief from './Thief'

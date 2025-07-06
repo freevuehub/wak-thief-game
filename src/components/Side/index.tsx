@@ -29,12 +29,12 @@ const Side: React.FC<Props> = (props) => {
   return (
     <>
       {selectedThief && (
-        <Dialog
-          onBackgroundClick={() => {
-            setSelectedThief(null)
-          }}
-        >
-          <Thief.Report {...selectedThief} type={dialogType} />
+        <Dialog>
+          <Thief.Report
+            {...selectedThief}
+            type={dialogType}
+            onClose={() => setSelectedThief(null)}
+          />
         </Dialog>
       )}
       <div className="fixed top-0 left-0 w-[300px] bottom-0 bg-gray-800 flex flex-col pb-20">
