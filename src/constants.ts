@@ -54,7 +54,7 @@ export enum PROMPT_KEY {
   CREATE_PROFILE_IMAGE = 'CREATE_PROFILE_IMAGE',
   REPORT = 'REPORT',
   ACTIONS = 'ACTIONS',
-  NEWS = 'NEWS',
+  CREATE_NEWS = 'CREATE_NEWS',
   THROW_OUT_THIEF = 'THROW_OUT_THIEF',
   REST_THIEF = 'REST_THIEF',
 }
@@ -63,4 +63,10 @@ export const DEFAULT_GAME_STAT: GameStat = {
   day: 0,
   cash: 5_000,
   globalAlertLevel: 10,
+}
+
+export const GEMINI_MODELS = {
+  FLASH_LIGHT: 'gemini-2.5-flash-lite-preview-06-17',
+  FLASH: 'gemini-2.5-flash',
+  IMAGE: 'imagen-3.0-generate-002',
 }

@@ -3,7 +3,11 @@ import { Calendar, News } from '@/icons'
 import { useStore } from '@/hooks'
 
 const Footer: React.FC = () => {
-  const { gameStat, loading } = useStore()
+  const { gameStat, updateDays } = useStore()
+
+  const onDayEnd = () => {
+    updateDays()
+  }
 
   return (
     <footer className="fixed flex items-center justify-between px-4 bottom-0 left-0 right-0 bg-gray-900/80 backdrop-blur-sm z-20 border-t border-gray-700 h-20">
@@ -20,8 +24,7 @@ const Footer: React.FC = () => {
           <span className="text-xl font-bold">{gameStat.day}일차</span>
         </div>
         <button
-          onClick={() => {}}
-          disabled={loading}
+          onClick={onDayEnd}
           className="px-6 py-2 bg-red-600 text-white font-bold rounded-md hover:bg-red-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-all transform hover:scale-105"
         >
           하루 종료

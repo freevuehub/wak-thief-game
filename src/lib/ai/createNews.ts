@@ -3,17 +3,15 @@ import { ai } from '.'
 import type { Thief, Profile } from '@/types'
 import { GEMINI_MODELS } from '@/constants'
 
-type ThiefResponse = Pick<Thief, 'name' | 'personality' | 'background' | 'dialogue' | 'character'>
-
-const createThief =
+const createNews =
   (prompt: string) =>
-  async (params: Profile): Promise<ThiefResponse> => {
+  async (params: Profile): Promise<any> => {
     prompt = prompt.replace(/\$\{name\}/g, params.name)
     prompt = prompt.replace(/\$\{personality\}/g, params.personality || '')
     prompt = prompt.replace(/\$\{background\}/g, params.background || '')
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: GEMINI_MODELS.FLASH,
+      model: GEMINI_MODELS.FLASH_LIGHT,
       contents: prompt,
       config: { responseMimeType: 'application/json' },
     })
@@ -25,7 +23,7 @@ const createThief =
     if (match && match[2]) jsonStr = match[2].trim()
 
     try {
-      return JSON.parse(jsonStr) as ThiefResponse
+      return JSON.parse(jsonStr) as Thief
     } catch (error) {
       console.error('Failed to parse JSON from Gemini:', error)
       return {
@@ -37,10 +35,8 @@ const createThief =
           '시키는 건 뭐든지 하죠.',
           '과거는 묻지 말아 주십시오.',
         ],
-        character:
-          '보스에게 절대적인 충성을 바치는 조직원. 과거의 정체를 철저히 숨기며, 명령에 무조건 복종하는 신뢰할 수 있는 부하.',
       }
     }
   }
 
-export default createThief
+export default createNews

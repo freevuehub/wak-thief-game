@@ -4,7 +4,7 @@ import { useStore, useAI } from '@/hooks'
 
 const App: React.FC = () => {
   const { aiLoading } = useAI()
-  const { thieves, thiefCreateLoading, selectedThief, setSelectedThief } = useStore()
+  const { thieves, storeLoading, selectedThief, setSelectedThief } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const App: React.FC = () => {
   return (
     <>
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
-        <Side />
+        <Side onCreateThief={() => setIsDialogOpen(true)} />
         <StatCard />
         <div className="pl-[300px] pb-[70px] h-screen">
           <Map />
@@ -22,7 +22,11 @@ const App: React.FC = () => {
         <Footer />
       </div>
       {isDialogOpen && (
-        <Dialog>
+        <Dialog
+          onBackgroundClick={() => {
+            thieves.length && setIsDialogOpen(false)
+          }}
+        >
           <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
         </Dialog>
       )}
@@ -35,9 +39,11 @@ const App: React.FC = () => {
           <Thief.Report {...selectedThief} />
         </Dialog>
       )}
-      {thiefCreateLoading && (
+      {false && (
         <Dialog>
-          <Spinner />
+          <div className="h-screen flex items-center justify-center">
+            <Spinner />
+          </div>
         </Dialog>
       )}
     </>

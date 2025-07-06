@@ -1,6 +1,7 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
 import type { ThrowOutThiefParams, ThrowOutThiefResponse } from '@/types'
+import { GEMINI_MODELS } from '@/constants'
 
 const throwOutThief =
   (prompt: string) =>
@@ -14,7 +15,7 @@ const throwOutThief =
     prompt = prompt.replace(/\$\{event\}/g, params.event || '')
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-preview-04-17',
+      model: GEMINI_MODELS.FLASH,
       contents: prompt,
       config: { responseMimeType: 'application/json' },
     })
@@ -37,7 +38,6 @@ const throwOutThief =
         ],
         feelings:
           '보스에게 쫓겨날까봐 두렵고 불안한 마음이지만, 동시에 다시 기회를 얻고 싶은 간절한 희망도 있어요.',
-        accept: true,
       }
     }
   }

@@ -1,6 +1,7 @@
 import { GenerateContentResponse } from '@google/genai'
 import { ai } from '.'
 import type { RestThiefParams, RestThiefResponse } from '@/types'
+import { GEMINI_MODELS } from '@/constants'
 
 const restThief =
   (prompt: string) =>
@@ -14,7 +15,7 @@ const restThief =
     prompt = prompt.replace(/\$\{event\}/g, params.event || '')
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-preview-04-17',
+      model: GEMINI_MODELS.FLASH,
       contents: prompt,
       config: { responseMimeType: 'application/json' },
     })
@@ -36,7 +37,6 @@ const restThief =
           '체력을 회복하고 더 좋은 성과를 내겠습니다.',
         ],
         feelings: '휴식을 받아서 안도감이 들지만, 동시에 더 열심히 일해야겠다는 의지도 생겨요.',
-        accept: true,
       }
     }
   }
