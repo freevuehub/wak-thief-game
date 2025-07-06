@@ -26,6 +26,7 @@ export const StoreContext = createContext({
     thief: Thief | null
     day: number
   } | null,
+  setThieves: (_: Array<Thief>) => {},
   setGroupLog: (_: Array<GroupLog>) => {},
   setSelectedThief: (_: { type: 'thief' | 'recruitment'; thief: Thief | null }) => {},
   setGameStat: (_: Record<keyof GameStat, GameStat[keyof GameStat]>) => {},
@@ -50,17 +51,17 @@ const StoreProvider: React.FC<Props> = (props) => {
     thief: Thief | null
   }>({ type: 'thief', thief: null })
   const [thieves, setThieves] = useState<Array<Thief>>([
-    // {
-    //   id: 'a',
-    //   name: '릴파',
-    //   personality: '목청이 좋음, 극E, 극P',
-    //   background: '어두운 게임을 좋아함.',
-    //   dialogue: ['릴파!!!!!', '요고랑, 조고랑', '봐줘잉~~'],
-    //   character: '목청이 좋은 외톨이',
-    //   loyalty: 100,
-    //   cost: 100,
-    //   image: '',
-    // },
+    {
+      id: 'a',
+      name: '릴파',
+      personality: '목청이 좋음, 극E, 극P',
+      background: '어두운 게임을 좋아함.',
+      character: '목청이 좋은 외톨이',
+      loyalty: 100,
+      cost: 100,
+      image: '',
+      fatigue: 0,
+    },
   ])
   const [gameStat, setGameStat] = useState<GameStat>(DEFAULT_GAME_STAT)
   const [groupLog, setGroupLog] = useState<Array<GroupLog>>([])
@@ -75,6 +76,10 @@ const StoreProvider: React.FC<Props> = (props) => {
         groupLog,
         createdThieves,
         setSelectedThief,
+        setThieves: (value: Array<Thief>) => {
+          setThieves((prev) => [...prev, ...value])
+          setCreatedThieves(null)
+        },
         setGroupLog: (value: Array<GroupLog>) => {
           setGroupLog((prev) => [...prev, ...value])
         },

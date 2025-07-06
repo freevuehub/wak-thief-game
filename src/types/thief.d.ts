@@ -12,7 +12,6 @@ export type Profile = {
 export type Thief = Profile & {
   id: string
   image: string
-  dialogue: Array<string>
   character: string
   loyalty: number
   cost: number

@@ -5,7 +5,7 @@ import { GEMINI_MODELS } from '@/constants'
 
 type Params = Pick<
   Thief,
-  'name' | 'personality' | 'background' | 'dialogue' | 'character' | 'cost' | 'loyalty' | 'fatigue'
+  'name' | 'personality' | 'background' | 'character' | 'cost' | 'loyalty' | 'fatigue'
 >
 
 const createThiefResponse =

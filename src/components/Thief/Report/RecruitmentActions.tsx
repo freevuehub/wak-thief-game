@@ -33,10 +33,11 @@ const Button: React.FC<ButtonProps> = (props) => {
   )
 }
 const Actions: React.FC<Props> = (props) => {
-  const { setSelectedThief, setGroupLog, gameStat } = useStore()
+  const { setSelectedThief, setThieves, setGroupLog, gameStat } = useStore()
   const { prompt } = usePrompt()
   const [loading, setLoading] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
+  const [dialogue, setDialogue] = useState<Array<string>>([])
   const report = useRef<HTMLDivElement>(null)
 
   const onRecruitment = async () => {
@@ -48,8 +49,10 @@ const Actions: React.FC<Props> = (props) => {
         (data) => {
           setSelectedThief({
             type: THIEF_SELECTED_TYPE.RECRUITMENT,
-            thief: { ...props, dialogue: data.dialogue },
+            thief: { ...props },
           })
+          setDialogue(data.dialogue)
+          setThieves([{ ...props }])
           setGroupLog([
             {
               day: gameStat.day,
@@ -74,17 +77,42 @@ const Actions: React.FC<Props> = (props) => {
 
   const onRecreate = async () => {
     try {
+      setLoading(true)
+      pipe(props, syndicateAI.createThiefResponse(prompt[PROMPT_KEY.RECREATE_THIEF].ko), (data) => {
+        setSelectedThief({
+          type: THIEF_SELECTED_TYPE.RECRUITMENT,
+          thief: { ...props },
+        })
+        setDialogue(data.dialogue)
+        setThieves([{ ...props }])
+        setGroupLog([
+          {
+            day: gameStat.day,
+            message: data.feelings,
+            type: PROMPT_KEY.RECREATE_THIEF,
+            thiefId: props.id,
+          },
+        ])
+        setLoading(false)
+        setIsEnd(true)
+      })
     } catch (error) {
       alert('오류가 발생했습니다.')
     }
   }
+
   useEffect(() => {
-    requestAnimationFrame(() => {
-      if (report.current) {
-        report.current.scrollTop = report.current.scrollHeight
+    if (dialogue.length > 0) return
+    setLoading(true)
+    pipe(
+      props,
+      syndicateAI.createThiefResponse(prompt[PROMPT_KEY.TALK_CREATE_THIEF].ko),
+      (data) => {
+        setDialogue(data.dialogue)
+        setLoading(false)
       }
-    })
-  }, [])
+    )
+  }, [dialogue])
 
   return (
     <>
@@ -101,7 +129,7 @@ const Actions: React.FC<Props> = (props) => {
             <Spinner />
           ) : (
             <Typewriter className="w-full whitespace-pre-wrap leading-loose">
-              {join('\n', props.dialogue)}
+              {join('\n', dialogue)}
             </Typewriter>
           )}
         </div>

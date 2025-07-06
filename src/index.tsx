@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { PromptProvider, AIProvider, StoreProvider } from './provider'
@@ -12,13 +11,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement)
 
 root.render(
-  <React.StrictMode>
-    <PromptProvider>
-      <AIProvider>
-        <StoreProvider>
-          <App />
-        </StoreProvider>
-      </AIProvider>
-    </PromptProvider>
-  </React.StrictMode>
+  <PromptProvider>
+    <AIProvider>
+      <StoreProvider>
+        <App />
+      </StoreProvider>
+    </AIProvider>
+  </PromptProvider>
 )

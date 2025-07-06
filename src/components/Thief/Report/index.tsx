@@ -9,7 +9,7 @@ type Props = Thief & {
 
 const Report: React.FC<Props> = (props) => {
   return (
-    <Card className="shadow-2xl w-full max-w-xs w-screen py-4">
+    <Card className="shadow-2xl w-full max-w-md w-screen py-4">
       <ul className="flex px-4 mb-4">
         <li className="flex-1 text-lg">
           급료: <span className="text-green-500">${props.cost}</span>
