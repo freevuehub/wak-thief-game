@@ -8,11 +8,23 @@ import type { Thief as ThiefType } from '@/types'
 
 type Props = {
   onCreateThief: () => void
+  createLoading: boolean
 }
 
 const Side: React.FC<Props> = (props) => {
   const [selectedThief, setSelectedThief] = useState<ThiefType | null>(null)
-  const { thieves, stat } = useStore()
+  const [dialogType, setDialogType] = useState<THIEF_SELECTED_TYPE>(THIEF_SELECTED_TYPE.THIEF)
+  const { thieves, createdThief } = useStore()
+
+  const onThiefClick = (thief: ThiefType) => {
+    setSelectedThief(thief)
+    setDialogType(THIEF_SELECTED_TYPE.THIEF)
+  }
+
+  const onRecruitmentThiefClick = (thief: ThiefType) => {
+    setSelectedThief(thief)
+    setDialogType(THIEF_SELECTED_TYPE.RECRUITMENT)
+  }
 
   return (
     <>
@@ -22,19 +34,17 @@ const Side: React.FC<Props> = (props) => {
             setSelectedThief(null)
           }}
         >
-          <Thief.Report {...selectedThief} type={THIEF_SELECTED_TYPE.THIEF} />
+          <Thief.Report {...selectedThief} type={dialogType} />
         </Dialog>
       )}
       <div className="fixed top-0 left-0 w-[300px] bottom-0 bg-gray-800 flex flex-col pb-20">
         <h1 className="text-2xl font-display text-red-500 p-4">Syndicate</h1>
-        {/* {createdThieves ? (
-          createdThieves.day === stat.day || createdThieves.thief === null ? (
-            <div className="p-4">영입중...</div>
-          ) : (
-            <div className="p-4">
-              <Thief.Profile {...createdThieves.thief} type={THIEF_SELECTED_TYPE.RECRUITMENT} />
-            </div>
-          )
+        {props.createLoading ? (
+          <div className="p-4 text-center">영입중...</div>
+        ) : createdThief ? (
+          <div className="p-4">
+            <Thief.ListItem {...createdThief} onClick={onRecruitmentThiefClick} />
+          </div>
         ) : (
           <div className="p-4">
             <button
@@ -45,11 +55,11 @@ const Side: React.FC<Props> = (props) => {
               + 신규 영입
             </button>
           </div>
-        )} */}
+        )}
         <ul className="flex flex-col gap-2 flex-1 overflow-y-auto p-4 scroll-smooth">
           {pipe(
             thieves,
-            map((thief) => <Thief.ListItem key={thief.id} {...thief} onClick={setSelectedThief} />),
+            map((thief) => <Thief.ListItem key={thief.id} {...thief} onClick={onThiefClick} />),
             toArray
           )}
         </ul>

@@ -1,7 +1,9 @@
 import { createContext, useMemo, useState } from 'react'
 import { Thief, GameStat } from '@/types'
 import { DEFAULT_GAME_STAT, PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
-import { filter, pipe, toArray } from '@fxts/core'
+import { filter, find, pipe, toArray } from '@fxts/core'
+import { usePrompt } from '@/hooks'
+import { syndicateAI, replacePrompt } from '@/lib'
 
 type Props = {
   children: React.ReactNode
@@ -18,6 +20,7 @@ type State = {
     Thief & {
       status: THIEF_STATUS
       team: THIEF_TEAM
+      day: number
     }
   >
   log: Array<GroupLog>
@@ -27,6 +30,11 @@ type Context = {
   storeLoading: Record<string, boolean>
   stat: GameStat
   thieves: Array<Thief>
+  createdThief?: Thief & {
+    status: THIEF_STATUS
+    team: THIEF_TEAM
+    day: number
+  }
   createThief: (
     thief: Thief & {
       status: THIEF_STATUS
@@ -35,6 +43,7 @@ type Context = {
   ) => void
   updateLoading: (value: Record<string, boolean>) => void
   createGroupLog: (log: GroupLog) => void
+  updateDays: () => void
 }
 
 export const StoreContext = createContext<Context>({
@@ -46,12 +55,15 @@ export const StoreContext = createContext<Context>({
   storeLoading: { createThief: false, createNews: false },
   stat: DEFAULT_GAME_STAT,
   thieves: [],
+  createdThief: undefined,
   createThief: () => {},
   updateLoading: () => {},
   createGroupLog: () => {},
+  updateDays: () => {},
 })
 
 const StoreProvider: React.FC<Props> = (props) => {
+  const { prompt } = usePrompt()
   const [storeLoading, setStoreLoading] = useState<Record<string, boolean>>({
     createThief: false,
     createNews: false,
@@ -71,6 +83,7 @@ const StoreProvider: React.FC<Props> = (props) => {
         fatigue: 0,
         status: THIEF_STATUS.IDLE,
         team: THIEF_TEAM.OUR,
+        day: 0,
       },
     ],
     log: [],
@@ -82,22 +95,46 @@ const StoreProvider: React.FC<Props> = (props) => {
         storeLoading,
         state,
         stat: useMemo(() => state.stat, [state.stat]),
-        thieves: useMemo(
-          () =>
-            pipe(
-              state.thieves,
-              filter(({ team }) => team === THIEF_TEAM.OUR),
-              toArray
-            ),
-          [state.thieves]
-        ),
+        thieves: useMemo(() => {
+          return pipe(
+            state.thieves,
+            filter(({ team }) => team === THIEF_TEAM.OUR),
+            toArray
+          )
+        }, [state.thieves]),
+        createdThief: useMemo(() => {
+          return pipe(
+            state.thieves,
+            find(({ status }) => status === THIEF_STATUS.RECRUITING)
+          )
+        }, [state.thieves]),
         updateLoading: (value: Record<string, boolean>) => {
           setStoreLoading((prev) => ({ ...prev, ...value }))
         },
+        updateDays: async () => {
+          setStoreLoading((prev) => ({ ...prev, createNews: true }))
+          await pipe(
+            {
+              events: '',
+              oldEvents: '',
+            },
+            replacePrompt(prompt[PROMPT_KEY.CREATE_NEWS].ko),
+            syndicateAI.createNews,
+            (data) => {
+              setState((prev) => ({
+                ...prev,
+                stat: { ...prev.stat, day: prev.stat.day + 1 },
+              }))
+              setStoreLoading((prev) => ({ ...prev, createNews: false }))
+              console.log(data)
+            }
+          )
+        },
         createThief: (thief) => {
+          console.log({ thief })
           setState((prev) => ({
             ...prev,
-            thieves: [...prev.thieves, thief],
+            thieves: [...prev.thieves, { ...thief, day: prev.stat.day }],
           }))
         },
         createGroupLog: (log) => {

@@ -86,6 +86,7 @@ export enum THIEF_STATUS {
   IDLE = 'idle',
   WORKING = 'working',
   RESTING = 'resting',
+  RECRUITING = 'recruiting',
 }
 
 export enum THIEF_TEAM {

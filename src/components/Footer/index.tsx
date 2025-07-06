@@ -3,10 +3,10 @@ import { Calendar, News } from '@/icons'
 import { useStore } from '@/hooks'
 
 const Footer: React.FC = () => {
-  const { stat } = useStore()
+  const { stat, updateDays } = useStore()
 
   const onDayEnd = () => {
-    // updateDays()
+    updateDays()
   }
 
   return (

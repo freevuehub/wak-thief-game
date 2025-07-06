@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react'
 import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/components'
-import { useStore, useAI } from '@/hooks'
-import { THIEF_SELECTED_TYPE } from '@/constants'
+import { useStore } from '@/hooks'
 
 const App: React.FC = () => {
-  const { aiLoading } = useAI()
-  const { thieves, storeLoading } = useStore()
+  const { thieves, storeLoading, stat } = useStore()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [createLoading, setCreateLoading] = useState(false)
 
   useEffect(() => {
     if (thieves.length === 0) setIsDialogOpen(true)
   }, [thieves])
+  useEffect(() => {
+    setCreateLoading(false)
+  }, [stat.day])
 
   return (
     <>
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
-        <Side onCreateThief={() => setIsDialogOpen(true)} />
+        <Side createLoading={createLoading} onCreateThief={() => setIsDialogOpen(true)} />
         <StatCard />
-        {/* <div className="pl-[300px] pb-[70px] h-screen">
+        <div className="pl-[300px] pb-[70px] h-screen">
           <Map />
-        </div> */}
+        </div>
         <Footer />
       </div>
       {isDialogOpen && (
@@ -28,7 +30,12 @@ const App: React.FC = () => {
             thieves.length && setIsDialogOpen(false)
           }}
         >
-          <Thief.Create onSubmit={() => setIsDialogOpen(false)} />
+          <Thief.Create
+            onSubmit={() => {
+              setCreateLoading(true)
+              setIsDialogOpen(false)
+            }}
+          />
         </Dialog>
       )}
       {storeLoading.createNews && (

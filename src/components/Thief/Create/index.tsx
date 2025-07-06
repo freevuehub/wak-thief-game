@@ -36,8 +36,8 @@ const Create: React.FC<Props> = (props) => {
       async (data) => ({
         ...data,
         id: uuidv4(),
-        status: THIEF_STATUS.IDLE,
-        team: THIEF_TEAM.OUR,
+        status: THIEF_STATUS.RECRUITING,
+        team: THIEF_TEAM.NEUTRAL,
         image: await pipe(
           {
             character: data.character,
@@ -49,7 +49,6 @@ const Create: React.FC<Props> = (props) => {
       }),
       (data) => {
         createThief(data)
-        updateLoading({ createThief: false })
       }
     )
 

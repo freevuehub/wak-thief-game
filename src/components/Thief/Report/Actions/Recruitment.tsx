@@ -33,7 +33,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   )
 }
 const Actions: React.FC<Props> = (props) => {
-  const { setSelectedThief, setThieves, setGroupLog, gameStat } = useStore()
+  const { createThief } = useStore()
   const { prompt } = usePrompt()
   const [loading, setLoading] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
@@ -43,59 +43,59 @@ const Actions: React.FC<Props> = (props) => {
   const onRecruitment = async () => {
     try {
       setLoading(true)
-      pipe(
-        props,
-        syndicateAI.createThiefResponse(prompt[PROMPT_KEY.RECRUITMENT_THIEF].ko),
-        (data) => {
-          setSelectedThief({
-            type: THIEF_SELECTED_TYPE.RECRUITMENT,
-            thief: { ...props },
-          })
-          setDialogue(data.dialogue)
-          setThieves([{ ...props }])
-          setGroupLog([
-            {
-              day: gameStat.day,
-              message: data.feelings,
-              type: PROMPT_KEY.RECRUITMENT_THIEF,
-              thiefId: props.id,
-            },
-          ])
-          setLoading(false)
-          setIsEnd(true)
-        }
-      )
+      // pipe(
+      //   props,
+      //   syndicateAI.createThiefResponse(prompt[PROMPT_KEY.RECRUITMENT_THIEF].ko),
+      //   (data) => {
+      //     setSelectedThief({
+      //       type: THIEF_SELECTED_TYPE.RECRUITMENT,
+      //       thief: { ...props },
+      //     })
+      //     setDialogue(data.dialogue)
+      //     setThieves([{ ...props }])
+      //     setGroupLog([
+      //       {
+      //         day: gameStat.day,
+      //         message: data.feelings,
+      //         type: PROMPT_KEY.RECRUITMENT_THIEF,
+      //         thiefId: props.id,
+      //       },
+      //     ])
+      //     setLoading(false)
+      //     setIsEnd(true)
+      //   }
+      // )
     } catch (error) {
       alert('오류가 발생했습니다.')
     }
   }
 
   const onClose = async () => {
-    setSelectedThief({ type: THIEF_SELECTED_TYPE.RECRUITMENT, thief: null })
+    // setSelectedThief({ type: THIEF_SELECTED_TYPE.RECRUITMENT, thief: null })
     setIsEnd(false)
   }
 
   const onRecreate = async () => {
     try {
       setLoading(true)
-      pipe(props, syndicateAI.createThiefResponse(prompt[PROMPT_KEY.RECREATE_THIEF].ko), (data) => {
-        setSelectedThief({
-          type: THIEF_SELECTED_TYPE.RECRUITMENT,
-          thief: { ...props },
-        })
-        setDialogue(data.dialogue)
-        setThieves([{ ...props }])
-        setGroupLog([
-          {
-            day: gameStat.day,
-            message: data.feelings,
-            type: PROMPT_KEY.RECREATE_THIEF,
-            thiefId: props.id,
-          },
-        ])
-        setLoading(false)
-        setIsEnd(true)
-      })
+      // pipe(props, syndicateAI.createThiefResponse(prompt[PROMPT_KEY.RECREATE_THIEF].ko), (data) => {
+      //   setSelectedThief({
+      //     type: THIEF_SELECTED_TYPE.RECRUITMENT,
+      //     thief: { ...props },
+      //   })
+      //   setDialogue(data.dialogue)
+      //   setThieves([{ ...props }])
+      //   setGroupLog([
+      //     {
+      //       day: gameStat.day,
+      //       message: data.feelings,
+      //       type: PROMPT_KEY.RECREATE_THIEF,
+      //       thiefId: props.id,
+      //     },
+      //   ])
+      //   setLoading(false)
+      //   setIsEnd(true)
+      // })
     } catch (error) {
       alert('오류가 발생했습니다.')
     }

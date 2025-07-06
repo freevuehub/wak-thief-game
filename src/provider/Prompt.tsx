@@ -35,8 +35,6 @@ const PromptProvider: React.FC<Props> = (props) => {
     )
   }, [])
 
-  console.log(prompt)
-
   return (
     <PromptContext.Provider value={{ prompt }}>
       {isLoaded ? 'Loading...' : props.children}
