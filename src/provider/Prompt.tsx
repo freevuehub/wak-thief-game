@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useMemo } from 'react'
 import { getGoogleSheets } from '@/utils'
 import { map, pipe, fromEntries } from '@fxts/core'
 import { PROMPT_KEY } from '@/constants'
+import { Spinner } from '@/components'
 
 type PromptValue = {
   prompt: Record<string, { ko: string; en: string }>
@@ -37,7 +38,13 @@ const PromptProvider: React.FC<Props> = (props) => {
 
   return (
     <PromptContext.Provider value={{ prompt }}>
-      {isLoaded ? 'Loading...' : props.children}
+      {isLoaded ? (
+        <div className="w-screen h-screen flex items-center justify-center">
+          <Spinner />
+        </div>
+      ) : (
+        props.children
+      )}
     </PromptContext.Provider>
   )
 }

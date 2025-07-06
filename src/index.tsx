@@ -12,10 +12,8 @@ const root = ReactDOM.createRoot(rootElement)
 
 root.render(
   <PromptProvider>
-    <AIProvider>
-      <StoreProvider>
-        <App />
-      </StoreProvider>
-    </AIProvider>
+    <StoreProvider>
+      <App />
+    </StoreProvider>
   </PromptProvider>
 )

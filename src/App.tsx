@@ -8,8 +8,8 @@ const App: React.FC = () => {
   const [createLoading, setCreateLoading] = useState(false)
 
   useEffect(() => {
-    if (thieves.length === 0) setIsDialogOpen(true)
-  }, [thieves])
+    if (thieves.length === 0 && !storeLoading.createThief) setIsDialogOpen(true)
+  }, [thieves, storeLoading.createThief])
   useEffect(() => {
     setCreateLoading(false)
   }, [stat.day])
