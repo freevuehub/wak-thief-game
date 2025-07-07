@@ -15,12 +15,8 @@ const Default: React.FC<Props> = (props) => {
   const { prompt } = usePrompt()
   const [actionType, setActionType] = useState<string | null>()
 
-  const onThrowOut = async () => {
-    setActionType('THROW_OUT')
-  }
-
-  const onRest = async () => {
-    setActionType('REST')
+  const onActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setActionType(event.currentTarget.value)
   }
 
   return (
@@ -41,7 +37,8 @@ const Default: React.FC<Props> = (props) => {
                   <Button
                     className="hover:bg-red-500 bg-red-500/70 disabled:bg-gray-500"
                     disabled={!!actionType}
-                    onClick={onThrowOut}
+                    onClick={onActionClick}
+                    value="THROW_OUT"
                   >
                     퇴출
                   </Button>
@@ -52,7 +49,8 @@ const Default: React.FC<Props> = (props) => {
                   <Button
                     className="hover:bg-yellow-500 bg-yellow-500/70 disabled:bg-gray-500"
                     disabled={!!actionType}
-                    onClick={onRest}
+                    onClick={onActionClick}
+                    value="REST"
                   >
                     휴식
                   </Button>
