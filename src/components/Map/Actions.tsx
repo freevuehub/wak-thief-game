@@ -3,8 +3,8 @@ import { Card, Thief } from '@/components'
 import type { Area, Thief as ThiefType } from '@/types'
 import Button from './Button'
 import { usePrompt, useStore } from '@/hooks'
-import { map, pipe, toArray } from '@fxts/core'
-import { PROMPT_KEY } from '@/constants'
+import { filter, map, pipe, toArray } from '@fxts/core'
+import { PROMPT_KEY, THIEF_STATUS } from '@/constants'
 import { replacePrompt } from '@/lib'
 
 type Props = {
@@ -78,6 +78,7 @@ const Actions: React.FC<Props> = (props) => {
             <ul className="flex flex-col gap-2 mb-2">
               {pipe(
                 thieves,
+                filter(({ status }) => status === THIEF_STATUS.IDLE),
                 map((thief) => (
                   <li key={thief.id} className="w-full">
                     <Thief.ListItem {...thief} onClick={onThiefClick} />

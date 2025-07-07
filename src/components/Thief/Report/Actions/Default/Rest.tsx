@@ -3,6 +3,7 @@ import type { Thief as ThiefType } from '@/types'
 import { usePrompt } from '@/hooks'
 import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
 import { useStore } from '@/hooks'
+import { pick, pipe } from '@fxts/core'
 
 type Props = ThiefType & {
   onClose: () => void
@@ -10,11 +11,31 @@ type Props = ThiefType & {
 
 const Rest: React.FC<Props> = (props) => {
   const { prompt } = usePrompt()
-  const { updateWork } = useStore()
+  const { updateThief } = useStore()
 
   const onRest = () => {
-    updateWork({ ...props, status: THIEF_STATUS.RESTING, team: THIEF_TEAM.OUR })
-    props.onClose()
+    pipe(
+      props,
+      pick([
+        'id',
+        'name',
+        'personality',
+        'character',
+        'background',
+        'loyalty',
+        'cost',
+        'fatigue',
+        'image',
+      ]),
+      (thief) => {
+        updateThief({
+          ...thief,
+          status: THIEF_STATUS.RESTING,
+          team: THIEF_TEAM.OUR,
+        })
+        props.onClose()
+      }
+    )
   }
 
   return (

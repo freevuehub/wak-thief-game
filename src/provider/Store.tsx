@@ -33,7 +33,13 @@ type Context = {
   storeLoading: Record<string, boolean>
   areas: Array<Area>
   stat: GameStat
-  thieves: Array<Thief>
+  thieves: Array<
+    Thief & {
+      status: THIEF_STATUS
+      team: THIEF_TEAM
+      day: number
+    }
+  >
   createdThief?: Thief & {
     status: THIEF_STATUS
     team: THIEF_TEAM
@@ -230,7 +236,6 @@ const StoreProvider: React.FC<Props> = (props) => {
           )
         }, [state.thieves]),
         createdThief: useMemo(() => {
-          console.log([...state.thieves.values()])
           return pipe(
             [...state.thieves.values()],
             find(({ status }) => status === THIEF_STATUS.RECRUITING)
@@ -242,6 +247,8 @@ const StoreProvider: React.FC<Props> = (props) => {
         updateThief: (thief) => {
           setState((prev) => {
             prev.thieves.set(thief.id, { ...prev.thieves.get(thief.id)!, ...thief })
+
+            console.log(prev.thieves)
 
             return { ...prev, thieves: new Map(prev.thieves) }
           })

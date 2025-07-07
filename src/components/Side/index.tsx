@@ -26,6 +26,8 @@ const Side: React.FC<Props> = (props) => {
     setDialogType(THIEF_SELECTED_TYPE.RECRUITMENT)
   }
 
+  console.log(thieves)
+
   return (
     <>
       {selectedThief && (
