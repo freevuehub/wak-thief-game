@@ -2,19 +2,15 @@ import React, { useState } from 'react'
 import { Profile } from '@/types'
 import { usePrompt, useStore } from '@/hooks'
 import { Card } from '@/components'
-import { syndicateAI } from '@/lib'
-import { v4 as uuidv4 } from 'uuid'
-import { pipe } from '@fxts/core'
-import { replacePrompt } from '@/lib'
-import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
+import { isNil, pipe, throwIf } from '@fxts/core'
 
 type Props = {
   onSubmit: () => void
 }
 
 const Create: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
-  const { createThief, updateLoading } = useStore()
+  const { gemini } = usePrompt()
+  const { addMember } = useStore()
   const [data, setData] = useState<Profile>({
     name: '',
     personality: '',
@@ -28,38 +24,17 @@ const Create: React.FC<Props> = (props) => {
   }
 
   const onSubmit = async () => {
-    updateLoading({ createThief: true })
-    pipe(
-      data,
-      replacePrompt(prompt[PROMPT_KEY.CREATE_THIEF].ko),
-      syndicateAI.createThief,
-      async (data) => ({
-        ...data,
-        id: uuidv4(),
-        status: THIEF_STATUS.RECRUITING,
-        team: THIEF_TEAM.NEUTRAL,
-        image: await pipe(
-          {
-            character: data.character,
-            background: data.background,
-          },
-          replacePrompt(prompt[PROMPT_KEY.CREATE_PROFILE_IMAGE].ko),
-          syndicateAI.createThiefImage
-        ),
-      }),
-      (data) => {
-        createThief(data)
-      }
-    )
-
     props.onSubmit()
 
-    // const profile = await generateThiefProfile(data.name, data.personality, data.background)
-    // const portraitUrl = await generateThiefPortrait(
-    //   profile.name,
-    //   profile.personality,
-    //   profile.background
-    // )
+    try {
+      pipe(
+        gemini.generateThief(data),
+        throwIf(isNil, () => Error('')),
+        addMember
+      )
+    } catch {
+      alert('조직원을 생성하지 못했습니다. 다시 시도해주세요.')
+    }
   }
 
   return (

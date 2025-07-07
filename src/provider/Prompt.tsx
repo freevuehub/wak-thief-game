@@ -1,17 +1,17 @@
 import { createContext, useState, useEffect, useMemo } from 'react'
 import { getGoogleSheets } from '@/utils'
 import { map, pipe, fromEntries } from '@fxts/core'
-import { PROMPT_KEY } from '@/constants'
 import { Spinner } from '@/components'
+import { Gemini } from '@/lib'
 
 type PromptValue = {
   prompt: Record<string, { ko: string; en: string }>
+  gemini: Gemini
 }
 
 export const PromptContext = createContext<PromptValue>({
-  prompt: {
-    [PROMPT_KEY.CREATE_THIEF]: { ko: '', en: '' },
-  },
+  prompt: {},
+  gemini: new Gemini({}),
 })
 
 type Props = {
@@ -36,8 +36,22 @@ const PromptProvider: React.FC<Props> = (props) => {
     )
   }, [])
 
+  const gemini = useMemo(
+    () =>
+      new Proxy(new Gemini(prompt), {
+        get(target, prop) {
+          return target[prop as keyof typeof target]
+        },
+        set(target, prop, value) {
+          target[prop as keyof typeof target] = value
+          return true
+        },
+      }),
+    [prompt]
+  )
+
   return (
-    <PromptContext.Provider value={{ prompt }}>
+    <PromptContext.Provider value={{ prompt, gemini }}>
       {isLoaded ? (
         <div className="w-screen h-screen flex items-center justify-center">
           <Spinner />

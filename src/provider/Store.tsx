@@ -1,10 +1,11 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
-import { Thief, GameStat, Area } from '@/types'
+import type { Member, Thief, GameStat, Area, MemberState } from '@/types'
 import { DEFAULT_GAME_STAT, PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
 import { filter, find, pipe, toArray, values } from '@fxts/core'
 import { usePrompt } from '@/hooks'
 import { syndicateAI, replacePrompt } from '@/lib'
 import { Spinner } from '@/components'
+import { v4 as uuidv4 } from 'uuid'
 
 type Props = {
   children: React.ReactNode
@@ -45,6 +46,7 @@ type Context = {
     team: THIEF_TEAM
     day: number
   }
+  addMember: (member: MemberState) => void
   createThief: (
     thief: Thief & {
       status: THIEF_STATUS
@@ -80,6 +82,7 @@ export const StoreContext = createContext<Context>({
   stat: DEFAULT_GAME_STAT,
   thieves: [],
   createdThief: undefined,
+  addMember: () => {},
   createThief: () => {},
   updateLoading: () => {},
   createGroupLog: () => {},
@@ -202,7 +205,7 @@ const StoreProvider: React.FC<Props> = (props) => {
           cost: 100,
           image: '',
           fatigue: 0,
-          status: THIEF_STATUS.RESTING,
+          status: THIEF_STATUS.IDLE,
           team: THIEF_TEAM.OUR,
           day: 0,
         },
@@ -241,6 +244,20 @@ const StoreProvider: React.FC<Props> = (props) => {
             find(({ status }) => status === THIEF_STATUS.RECRUITING)
           )
         }, [state.thieves]),
+        addMember: (member: MemberState) => {
+          setState((prev) => {
+            prev.thieves.set(uuidv4(), {
+              ...member,
+              day: prev.stat.day,
+              id: uuidv4(),
+              status: THIEF_STATUS.RECRUITING,
+              team: THIEF_TEAM.NEUTRAL,
+            })
+
+            return { ...prev, thieves: new Map(prev.thieves) }
+          })
+        },
+
         updateLoading: (value: Record<string, boolean>) => {
           setStoreLoading((prev) => ({ ...prev, ...value }))
         },

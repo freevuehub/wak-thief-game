@@ -4,7 +4,7 @@ import type { Area, Thief as ThiefType } from '@/types'
 import Button from './Button'
 import { usePrompt, useStore } from '@/hooks'
 import { filter, map, pipe, toArray } from '@fxts/core'
-import { PROMPT_KEY, THIEF_STATUS } from '@/constants'
+import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
 import { replacePrompt } from '@/lib'
 
 type Props = {
@@ -17,16 +17,21 @@ enum ACTION_TYPE {
   WORK = 'work',
 }
 
+type WorkThief = ThiefType & {
+  status: THIEF_STATUS
+  team: THIEF_TEAM
+}
+
 const Section: React.FC<{ children: React.ReactNode }> = (props) => {
   return <div className="mt-4 pt-4 border-t border-gray-200/50">{props.children}</div>
 }
 
 const Actions: React.FC<Props> = (props) => {
-  const { thieves } = useStore()
+  const { thieves, updateWork } = useStore()
   const { prompt } = usePrompt()
   const [actionType, setActionType] = useState<ACTION_TYPE | ''>('')
-  const [thief, setThief] = useState<ThiefType | null>(null)
-  const [workThief, setWorkThief] = useState<ThiefType | null>(null)
+  const [thief, setThief] = useState<WorkThief | null>(null)
+  const [workThief, setWorkThief] = useState<WorkThief | null>(null)
   const list = useMemo(() => {
     return pipe(
       thieves,
@@ -38,7 +43,7 @@ const Actions: React.FC<Props> = (props) => {
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionType(event.currentTarget.value as ACTION_TYPE)
   }
-  const onThiefClick = (thief: ThiefType) => {
+  const onThiefClick = (thief: WorkThief) => {
     setThief(thief)
   }
   const onCancel = () => {
@@ -46,6 +51,13 @@ const Actions: React.FC<Props> = (props) => {
   }
   const onSelect = () => {
     setWorkThief(thief)
+  }
+  const onSubmit = () => {
+    if (actionType === ACTION_TYPE.WORK) {
+      updateWork(workThief!)
+    } else {
+      // updateThief({ ...thief, status: THIEF_STATUS.PATROL })
+    }
   }
 
   return (
@@ -156,7 +168,7 @@ const Actions: React.FC<Props> = (props) => {
                 <Button
                   className="bg-blue-500 disabled:bg-blue-300"
                   type="button"
-                  onClick={onSelect}
+                  onClick={onSubmit}
                 >
                   닫기
                 </Button>

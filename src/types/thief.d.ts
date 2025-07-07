@@ -1,3 +1,23 @@
+export type MemberProfile = {
+  name: string
+  personality: string
+  character: string
+  background: string
+  cost: number
+  loyalty: number
+}
+export type MemberState = MemberProfile & {
+  fatigue: number
+  character: string
+  image: string
+}
+export type Member = MemberState & {
+  id: string
+  status: THIEF_STATUS
+  team: THIEF_TEAM
+  createdAt: number
+}
+
 export type ImageParams = {
   character: string
   background: string
