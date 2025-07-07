@@ -43,7 +43,7 @@ const Map: React.FC = () => {
       </div>
       {selectedArea && (
         <Dialog onBackgroundClick={() => setSelectedArea(null)}>
-          <Actions area={selectedArea} />
+          <Actions area={selectedArea} onClose={() => setSelectedArea(null)} />
         </Dialog>
       )}
     </>

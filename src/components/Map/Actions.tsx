@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, Thief } from '@/components'
 import type { Area, Thief as ThiefType } from '@/types'
 import Button from './Button'
@@ -9,6 +9,7 @@ import { replacePrompt } from '@/lib'
 
 type Props = {
   area: Area
+  onClose: () => void
 }
 
 enum ACTION_TYPE {
@@ -26,6 +27,13 @@ const Actions: React.FC<Props> = (props) => {
   const [actionType, setActionType] = useState<ACTION_TYPE | ''>('')
   const [thief, setThief] = useState<ThiefType | null>(null)
   const [workThief, setWorkThief] = useState<ThiefType | null>(null)
+  const list = useMemo(() => {
+    return pipe(
+      thieves,
+      filter(({ status }) => status === THIEF_STATUS.IDLE),
+      toArray
+    )
+  }, [thieves])
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionType(event.currentTarget.value as ACTION_TYPE)
@@ -75,18 +83,30 @@ const Actions: React.FC<Props> = (props) => {
       {!!actionType && (
         <Section>
           {!thief ? (
-            <ul className="flex flex-col gap-2 mb-2">
-              {pipe(
-                thieves,
-                filter(({ status }) => status === THIEF_STATUS.IDLE),
-                map((thief) => (
-                  <li key={thief.id} className="w-full">
-                    <Thief.ListItem {...thief} onClick={onThiefClick} />
-                  </li>
-                )),
-                toArray
-              )}
-            </ul>
+            list.length > 0 ? (
+              <ul className="flex flex-col gap-2 mb-2">
+                {pipe(
+                  list,
+                  map((thief) => (
+                    <li key={thief.id} className="w-full">
+                      <Thief.ListItem {...thief} onClick={onThiefClick} />
+                    </li>
+                  )),
+                  toArray
+                )}
+              </ul>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-2 mb-2">
+                <p className="text-sm">활동이 가능한 조직원이 없습니다.</p>
+                <Button
+                  className="bg-blue-500 disabled:bg-blue-300"
+                  type="button"
+                  onClick={props.onClose}
+                >
+                  닫기
+                </Button>
+              </div>
+            )
           ) : (
             <>
               <div className="mb-2">

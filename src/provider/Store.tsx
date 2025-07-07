@@ -202,7 +202,7 @@ const StoreProvider: React.FC<Props> = (props) => {
           cost: 100,
           image: '',
           fatigue: 0,
-          status: THIEF_STATUS.IDLE,
+          status: THIEF_STATUS.RESTING,
           team: THIEF_TEAM.OUR,
           day: 0,
         },
