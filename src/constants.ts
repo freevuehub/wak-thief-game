@@ -1,5 +1,5 @@
 import { ThiefAction } from './legacyType'
-import { GameStat } from './types'
+import type { GameStat, Member } from './types'
 
 export const INITIAL_CASH = 5000
 export const RECRUITMENT_COST = 500
@@ -97,3 +97,23 @@ export enum MEMBER_TEAM {
   POLICE = 'police',
   NEUTRAL = 'neutral',
 }
+
+export const DEFAULT_MEMBER: Array<[string, Member]> = [
+  [
+    'a',
+    {
+      id: 'a',
+      name: '릴파',
+      personality: '목청이 좋음, 극E, 극P',
+      background: '어두운 게임을 좋아함.',
+      character: '목청이 좋은 외톨이',
+      loyalty: 100,
+      cost: 100,
+      image: '',
+      fatigue: 0,
+      status: MEMBER_STATUS.RECRUITING,
+      team: MEMBER_TEAM.NEUTRAL,
+      createdAt: 0,
+    },
+  ],
+]

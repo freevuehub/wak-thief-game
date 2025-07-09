@@ -1,5 +1,6 @@
 import { MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
 import type { Member } from '@/types'
+import { includes } from '@fxts/core'
 
 type Props = Member & {
   status?: MEMBER_STATUS
@@ -17,7 +18,7 @@ const ListItem: React.FC<Props> = (props) => {
     <button
       className="flex cursor-pointer hover:bg-gray-700/50 items-center gap-4 block w-full p-2 rounded-lg"
       type="button"
-      disabled={props.status !== MEMBER_STATUS.IDLE}
+      disabled={includes(props.status, [MEMBER_STATUS.RESTING, MEMBER_STATUS.WORKING])}
       onClick={onClick}
     >
       <div className="size-12 rounded-full bg-gray-700 overflow-hidden">

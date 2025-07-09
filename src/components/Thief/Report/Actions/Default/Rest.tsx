@@ -1,13 +1,19 @@
 import { Thief, Button } from '@/components'
 import type { Member } from '@/types'
-import { PROMPT_KEY } from '@/constants'
+import { PROMPT_KEY, MEMBER_STATUS } from '@/constants'
+import { useStore } from '@/hooks'
 
 type Props = Member & {
   onClose: () => void
 }
 
 const Rest: React.FC<Props> = (props) => {
-  const onRest = () => {}
+  const { updateMember } = useStore()
+
+  const onRest = () => {
+    updateMember({ ...props, status: MEMBER_STATUS.RESTING })
+    props.onClose()
+  }
 
   return (
     <Thief.Talk

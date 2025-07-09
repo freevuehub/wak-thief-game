@@ -1,13 +1,17 @@
 import { Thief, Button } from '@/components'
 import type { Member } from '@/types'
-import { PROMPT_KEY } from '@/constants'
+import { PROMPT_KEY, MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
+import { useStore } from '@/hooks'
 
 type Props = Member & {
   onClose: () => void
 }
 
 const ThrowOut: React.FC<Props> = (props) => {
+  const { updateMember } = useStore()
+
   const onThrowOut = () => {
+    updateMember({ ...props, status: MEMBER_STATUS.IDLE, team: MEMBER_TEAM.NEUTRAL })
     props.onClose()
   }
 

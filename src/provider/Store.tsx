@@ -1,7 +1,13 @@
-import { createContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useMemo, useState } from 'react'
 import type { Member, GameStat, Area, MemberState } from '@/types'
-import { DEFAULT_GAME_STAT, PROMPT_KEY, MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
-import { filter, find, pipe, toArray, values } from '@fxts/core'
+import {
+  DEFAULT_GAME_STAT,
+  PROMPT_KEY,
+  MEMBER_STATUS,
+  MEMBER_TEAM,
+  DEFAULT_MEMBER,
+} from '@/constants'
+import { filter, find, pipe, toArray } from '@fxts/core'
 import { usePrompt } from '@/hooks'
 import { syndicateAI, replacePrompt } from '@/lib'
 import { Spinner } from '@/components'
@@ -30,6 +36,7 @@ type Context = {
   ourMembers: Array<Member>
   newMember?: Member
   addMember: (member: MemberState) => void
+  updateMember: (member: Member) => void
   createThief: (
     thief: Member & {
       status: MEMBER_STATUS
@@ -66,6 +73,7 @@ export const StoreContext = createContext<Context>({
   ourMembers: [],
   newMember: undefined,
   addMember: () => {},
+  updateMember: () => {},
   createThief: () => {},
   updateLoading: () => {},
   createGroupLog: () => {},
@@ -175,25 +183,7 @@ const StoreProvider: React.FC<Props> = (props) => {
   ])
   const [state, setState] = useState<State>({
     stat: DEFAULT_GAME_STAT,
-    thieves: new Map([
-      [
-        'a',
-        {
-          id: 'a',
-          name: '릴파',
-          personality: '목청이 좋음, 극E, 극P',
-          background: '어두운 게임을 좋아함.',
-          character: '목청이 좋은 외톨이',
-          loyalty: 100,
-          cost: 100,
-          image: '',
-          fatigue: 0,
-          status: MEMBER_STATUS.IDLE,
-          team: MEMBER_TEAM.OUR,
-          createdAt: 0,
-        },
-      ],
-    ]),
+    thieves: new Map(DEFAULT_MEMBER),
     work: new Map(),
     log: [],
   })
@@ -238,6 +228,12 @@ const StoreProvider: React.FC<Props> = (props) => {
               team: MEMBER_TEAM.NEUTRAL,
             })
 
+            return { ...prev, thieves: new Map(prev.thieves) }
+          })
+        },
+        updateMember: (member) => {
+          setState((prev) => {
+            prev.thieves.set(member.id, { ...prev.thieves.get(member.id)!, ...member })
             return { ...prev, thieves: new Map(prev.thieves) }
           })
         },

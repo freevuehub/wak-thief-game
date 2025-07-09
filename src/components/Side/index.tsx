@@ -16,13 +16,13 @@ const Side: React.FC<Props> = (props) => {
   const [dialogType, setDialogType] = useState<MEMBER_SELECTED_TYPE>(MEMBER_SELECTED_TYPE.DEFAULT)
   const { ourMembers, newMember } = useStore()
 
-  const onThiefClick = (thief: Member) => {
-    setSelectedMember(thief)
+  const onMemberClick = (member: Member) => {
+    setSelectedMember(member)
     setDialogType(MEMBER_SELECTED_TYPE.DEFAULT)
   }
 
-  const onRecruitmentThiefClick = (thief: Member) => {
-    setSelectedMember(thief)
+  const onRecruitmentMemberClick = (member: Member) => {
+    setSelectedMember(member)
     setDialogType(MEMBER_SELECTED_TYPE.RECRUITMENT)
   }
 
@@ -43,7 +43,7 @@ const Side: React.FC<Props> = (props) => {
           <div className="p-4 text-center">영입중...</div>
         ) : newMember ? (
           <div className="p-4">
-            <Thief.ListItem {...newMember} onClick={onRecruitmentThiefClick} />
+            <Thief.ListItem key={newMember.id} {...newMember} onClick={onRecruitmentMemberClick} />
           </div>
         ) : (
           <div className="p-4">
@@ -59,7 +59,7 @@ const Side: React.FC<Props> = (props) => {
         <ul className="flex flex-col gap-2 flex-1 overflow-y-auto p-4 scroll-smooth">
           {pipe(
             ourMembers,
-            map((thief) => <Thief.ListItem key={thief.id} {...thief} onClick={onThiefClick} />),
+            map((member) => <Thief.ListItem key={member.id} {...member} onClick={onMemberClick} />),
             toArray
           )}
         </ul>

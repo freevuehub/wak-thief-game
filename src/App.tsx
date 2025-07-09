@@ -3,14 +3,14 @@ import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/component
 import { usePrompt, useStore } from '@/hooks'
 
 const App: React.FC = () => {
-  const { ourMembers, storeLoading } = useStore()
+  const { ourMembers, newMember } = useStore()
   const { loading } = usePrompt()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [createLoading, setCreateLoading] = useState(false)
 
   useEffect(() => {
-    if (ourMembers.length === 0 && !storeLoading.createThief) setIsDialogOpen(true)
-  }, [ourMembers, storeLoading.createThief])
+    if (ourMembers.length === 0 && !newMember) setIsDialogOpen(true)
+  }, [ourMembers, newMember])
   useEffect(() => {
     setCreateLoading(loading)
   }, [loading])
