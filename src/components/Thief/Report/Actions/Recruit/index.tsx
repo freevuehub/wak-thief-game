@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { Button, Thief } from '@/components'
 import { usePrompt } from '@/hooks'
-import type { Thief as ThiefType } from '@/types'
+import type { Member } from '@/types'
 import { PROMPT_KEY } from '@/constants'
 import Accept from './Accept'
 import Cancel from './Cancel'
 import Section from '../Section'
 
-type Props = ThiefType & {
+type Props = Member & {
   onClose: () => void
 }
 
 const Actions: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
   const [actionType, setActionType] = useState<string | null>(null)
 
   const onActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,7 +21,7 @@ const Actions: React.FC<Props> = (props) => {
   return (
     <div className="px-4 my-4">
       <Section>
-        <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.TALK_CREATE_THIEF].ko}>
+        <Thief.Talk data={props} prompt={PROMPT_KEY.GENERATE_MEMBER_RECRUITMENT_TALK}>
           <ul className="flex justify-center gap-2">
             {!actionType && (
               <li className="flex-1">

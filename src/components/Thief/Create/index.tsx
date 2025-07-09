@@ -28,7 +28,7 @@ const Create: React.FC<Props> = (props) => {
 
     try {
       pipe(
-        gemini.generateThief(data),
+        gemini.generateMember(data),
         throwIf(isNil, () => Error('')),
         addMember
       )

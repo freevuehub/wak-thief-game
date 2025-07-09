@@ -79,19 +79,19 @@ export const GEMINI_MODELS = {
   IMAGE: 'imagen-3.0-generate-002',
 }
 
-export enum THIEF_SELECTED_TYPE {
-  THIEF = 'thief',
+export enum MEMBER_SELECTED_TYPE {
+  DEFAULT = 'default',
   RECRUITMENT = 'recruitment',
 }
 
-export enum THIEF_STATUS {
+export enum MEMBER_STATUS {
   IDLE = 'idle',
   WORKING = 'working',
   RESTING = 'resting',
   RECRUITING = 'recruiting',
 }
 
-export enum THIEF_TEAM {
+export enum MEMBER_TEAM {
   OUR = 'our',
   ENEMY = 'enemy',
   POLICE = 'police',

@@ -1,33 +1,34 @@
 import { useState, useEffect } from 'react'
 import { Thief, Dialog, StatCard, Side, Map, Footer, Spinner } from '@/components'
-import { useStore } from '@/hooks'
+import { usePrompt, useStore } from '@/hooks'
 
 const App: React.FC = () => {
-  const { thieves, storeLoading, stat } = useStore()
+  const { ourMembers, storeLoading } = useStore()
+  const { loading } = usePrompt()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [createLoading, setCreateLoading] = useState(false)
 
   useEffect(() => {
-    if (thieves.length === 0 && !storeLoading.createThief) setIsDialogOpen(true)
-  }, [thieves, storeLoading.createThief])
+    if (ourMembers.length === 0 && !storeLoading.createThief) setIsDialogOpen(true)
+  }, [ourMembers, storeLoading.createThief])
   useEffect(() => {
-    setCreateLoading(false)
-  }, [stat.day])
+    setCreateLoading(loading)
+  }, [loading])
 
   return (
     <>
       <div className="relative min-h-screen bg-gray-900 text-gray-200">
-        <Side createLoading={createLoading} onCreateThief={() => setIsDialogOpen(true)} />
+        <Side createLoading={createLoading} onCreate={() => setIsDialogOpen(true)} />
         <StatCard />
-        <div className="pl-[300px] pb-[70px] h-screen">
+        {/* <div className="pl-[300px] pb-[70px] h-screen">
           <Map />
-        </div>
+        </div> */}
         <Footer />
       </div>
       {isDialogOpen && (
         <Dialog
           onBackgroundClick={() => {
-            thieves.length && setIsDialogOpen(false)
+            ourMembers.length && setIsDialogOpen(false)
           }}
         >
           <Thief.Create
@@ -38,7 +39,7 @@ const App: React.FC = () => {
           />
         </Dialog>
       )}
-      {storeLoading.createNews && (
+      {loading && (
         <Dialog>
           <div className="h-screen flex items-center justify-center">
             <Spinner />

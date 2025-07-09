@@ -1,24 +1,30 @@
 import { Thief, Button } from '@/components'
-import type { Thief as ThiefType } from '@/types'
-import { usePrompt } from '@/hooks'
-import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
-import { useStore } from '@/hooks'
+import type { Member } from '@/types'
+import { PROMPT_KEY } from '@/constants'
 
-type Props = ThiefType & {
+type Props = Member & {
   onClose: () => void
 }
 
 const ThrowOut: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
-  const { updateThief } = useStore()
-
   const onThrowOut = () => {
-    updateThief({ ...props, status: THIEF_STATUS.IDLE, team: THIEF_TEAM.NEUTRAL })
     props.onClose()
   }
 
   return (
-    <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.THROW_OUT_THIEF].ko}>
+    <Thief.Talk
+      data={{
+        name: props.name,
+        personality: props.personality,
+        character: props.character,
+        background: props.background,
+        cost: props.cost,
+        loyalty: props.loyalty,
+        fatigue: props.fatigue,
+        events: '',
+      }}
+      prompt={PROMPT_KEY.GENERATE_MEMBER_THROW_OUT_TALK}
+    >
       <ul className="flex justify-center gap-2">
         <li className="flex-1">
           <Button className="bg-gray-500/70 hover:bg-gray-500" type="button" onClick={onThrowOut}>

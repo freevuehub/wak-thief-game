@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { Thief, Button } from '@/components'
-import { usePrompt } from '@/hooks'
-import type { Thief as ThiefType } from '@/types'
+import type { Member } from '@/types'
 import { PROMPT_KEY } from '@/constants'
 import Section from '../Section'
 import Rest from './Rest'
 import ThrowOut from './ThrowOut'
 
-type Props = ThiefType & {
+type Props = Member & {
   onClose: () => void
 }
 
 const Default: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
   const [actionType, setActionType] = useState<string | null>()
 
   const onActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,7 +21,19 @@ const Default: React.FC<Props> = (props) => {
     <>
       <div className="px-4 my-4">
         <Section>
-          <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.TALK_THIEF].ko}>
+          <Thief.Talk
+            data={{
+              name: props.name,
+              personality: props.personality,
+              character: props.character,
+              background: props.background,
+              cost: props.cost,
+              loyalty: props.loyalty,
+              fatigue: props.fatigue,
+              events: '',
+            }}
+            prompt={PROMPT_KEY.GENERATE_MEMBER_IDLE_TALK}
+          >
             <ul className="flex justify-center gap-2">
               {!actionType && (
                 <li className="flex-1">

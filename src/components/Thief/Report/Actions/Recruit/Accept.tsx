@@ -1,24 +1,22 @@
 import { Thief, Button } from '@/components'
-import type { Thief as ThiefType } from '@/types'
-import { usePrompt } from '@/hooks'
-import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
+import type { Member } from '@/types'
+import { PROMPT_KEY, MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
 import { useStore } from '@/hooks'
 
-type Props = ThiefType & {
+type Props = Member & {
   onClose: () => void
 }
 
 const Accept: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
   const { updateThief } = useStore()
 
   const onAccept = () => {
-    updateThief({ ...props, status: THIEF_STATUS.IDLE, team: THIEF_TEAM.OUR })
+    updateThief({ ...props, status: MEMBER_STATUS.IDLE, team: MEMBER_TEAM.OUR })
     props.onClose()
   }
 
   return (
-    <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.RECRUITMENT_THIEF].ko}>
+    <Thief.Talk data={props} prompt={PROMPT_KEY.GENERATE_MEMBER_RECRUITMENT}>
       <ul className="flex justify-center gap-2">
         <li className="flex-1">
           <Button className="bg-gray-500/70 hover:bg-gray-500" type="button" onClick={onAccept}>

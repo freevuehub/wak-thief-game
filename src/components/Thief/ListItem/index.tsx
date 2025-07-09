@@ -1,10 +1,10 @@
-import { THIEF_STATUS, THIEF_TEAM } from '@/constants'
-import { Thief } from '@/types'
+import { MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
+import type { Member } from '@/types'
 
-type Props = Thief & {
-  status?: THIEF_STATUS
-  team?: THIEF_TEAM
-  onClick: (thief: Thief) => void
+type Props = Member & {
+  status?: MEMBER_STATUS
+  team?: MEMBER_TEAM
+  onClick: (thief: Member) => void
 }
 
 const ListItem: React.FC<Props> = (props) => {
@@ -17,7 +17,7 @@ const ListItem: React.FC<Props> = (props) => {
     <button
       className="flex cursor-pointer hover:bg-gray-700/50 items-center gap-4 block w-full p-2 rounded-lg"
       type="button"
-      disabled={props.status !== THIEF_STATUS.IDLE}
+      disabled={props.status !== MEMBER_STATUS.IDLE}
       onClick={onClick}
     >
       <div className="size-12 rounded-full bg-gray-700 overflow-hidden">

@@ -1,45 +1,28 @@
 import { Thief, Button } from '@/components'
-import type { Thief as ThiefType } from '@/types'
-import { usePrompt } from '@/hooks'
-import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
-import { useStore } from '@/hooks'
-import { pick, pipe } from '@fxts/core'
+import type { Member } from '@/types'
+import { PROMPT_KEY } from '@/constants'
 
-type Props = ThiefType & {
+type Props = Member & {
   onClose: () => void
 }
 
 const Rest: React.FC<Props> = (props) => {
-  const { prompt } = usePrompt()
-  const { updateThief } = useStore()
-
-  const onRest = () => {
-    pipe(
-      props,
-      pick([
-        'id',
-        'name',
-        'personality',
-        'character',
-        'background',
-        'loyalty',
-        'cost',
-        'fatigue',
-        'image',
-      ]),
-      (thief) => {
-        updateThief({
-          ...thief,
-          status: THIEF_STATUS.RESTING,
-          team: THIEF_TEAM.OUR,
-        })
-        props.onClose()
-      }
-    )
-  }
+  const onRest = () => {}
 
   return (
-    <Thief.Talk thief={props} prompt={prompt[PROMPT_KEY.REST_THIEF].ko}>
+    <Thief.Talk
+      data={{
+        name: props.name,
+        personality: props.personality,
+        character: props.character,
+        background: props.background,
+        cost: props.cost,
+        loyalty: props.loyalty,
+        fatigue: props.fatigue,
+        events: '',
+      }}
+      prompt={PROMPT_KEY.GENERATE_MEMBER_REST_TALK}
+    >
       <ul className="flex justify-center gap-2">
         <li className="flex-1">
           <Button className="bg-gray-500/70 hover:bg-gray-500" type="button" onClick={onRest}>

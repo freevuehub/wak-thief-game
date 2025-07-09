@@ -4,7 +4,7 @@ import type { Area, Thief as ThiefType } from '@/types'
 import Button from './Button'
 import { usePrompt, useStore } from '@/hooks'
 import { filter, map, pipe, toArray } from '@fxts/core'
-import { PROMPT_KEY, THIEF_STATUS, THIEF_TEAM } from '@/constants'
+import { PROMPT_KEY, MEMBER_STATUS, MEMBER_TEAM } from '@/constants'
 import { replacePrompt } from '@/lib'
 
 type Props = {
@@ -18,8 +18,8 @@ enum ACTION_TYPE {
 }
 
 type WorkThief = ThiefType & {
-  status: THIEF_STATUS
-  team: THIEF_TEAM
+  status: MEMBER_STATUS
+  team: MEMBER_TEAM
 }
 
 const Section: React.FC<{ children: React.ReactNode }> = (props) => {
@@ -27,18 +27,18 @@ const Section: React.FC<{ children: React.ReactNode }> = (props) => {
 }
 
 const Actions: React.FC<Props> = (props) => {
-  const { thieves, updateWork } = useStore()
+  const { ourMembers, updateWork } = useStore()
   const { prompt } = usePrompt()
   const [actionType, setActionType] = useState<ACTION_TYPE | ''>('')
   const [thief, setThief] = useState<WorkThief | null>(null)
   const [workThief, setWorkThief] = useState<WorkThief | null>(null)
   const list = useMemo(() => {
     return pipe(
-      thieves,
-      filter(({ status }) => status === THIEF_STATUS.IDLE),
+      ourMembers,
+      filter(({ status }) => status === MEMBER_STATUS.IDLE),
       toArray
     )
-  }, [thieves])
+  }, [ourMembers])
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionType(event.currentTarget.value as ACTION_TYPE)
@@ -124,7 +124,7 @@ const Actions: React.FC<Props> = (props) => {
               <div className="mb-2">
                 <Thief.ListItem {...thief} onClick={onThiefClick} />
               </div>
-              <Thief.Talk prompt={prompt[PROMPT_KEY.TALK_THIEF].ko} thief={thief}>
+              <Thief.Talk prompt={PROMPT_KEY.GENERATE_MEMBER_WORK_TALK} data={thief}>
                 <ul className="flex gap-2 mt-4">
                   {!workThief && (
                     <li className="flex-1">
@@ -155,14 +155,7 @@ const Actions: React.FC<Props> = (props) => {
       )}
       {actionType === ACTION_TYPE.WORK && workThief && (
         <Section>
-          <Thief.Talk
-            prompt={replacePrompt(prompt[PROMPT_KEY.TALK_WORK_THIEF].ko)({
-              area: props.area.name,
-              function: props.area.function,
-              police: props.area.police,
-            })}
-            thief={workThief}
-          >
+          <Thief.Talk prompt={PROMPT_KEY.GENERATE_MEMBER_WORK_TALK} data={workThief}>
             <ul className="flex gap-2 mt-4">
               <li className="flex-1">
                 <Button

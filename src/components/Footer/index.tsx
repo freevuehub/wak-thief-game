@@ -1,12 +1,15 @@
 import React from 'react'
 import { Calendar, News } from '@/icons'
-import { useStore } from '@/hooks'
+import { usePrompt, useStore } from '@/hooks'
 
 const Footer: React.FC = () => {
-  const { stat, updateDays } = useStore()
+  const { gemini } = usePrompt()
+  const { stat } = useStore()
 
-  const onDayEnd = () => {
-    updateDays()
+  const onDayEnd = async () => {
+    const { main, etc } = await gemini.generateNews()
+
+    console.log(main, etc)
   }
 
   return (

@@ -7,15 +7,21 @@ import type { MemberProfile, MemberState } from '@/types'
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
 class Gemini {
+  private listeners: (() => void)[] = []
   private loadingCount: number = 0
+  public newsLoading: boolean = false
 
-  constructor(private prompt: Record<string, { ko: string; en: string }>) {}
+  constructor(
+    private prompt: Record<string, { ko: string; en: string }>,
+    private onLoading: (newLoading: boolean, loadingCount: number) => void
+  ) {}
 
-  public async generateThief(params: { name: string; personality: string; background: string }) {
+  public async generateMember(params: { name: string; personality: string; background: string }) {
     this.loadingCount++
+    this.onLoading(this.newsLoading, this.loadingCount)
 
     try {
-      return pipe(
+      return await pipe(
         params,
         replacePrompt(this.prompt[PROMPT_KEY.GENERATE_MEMBER].ko),
         (prompt) =>
@@ -26,14 +32,14 @@ class Gemini {
           }),
         (response) => this.parseJson<MemberState>(response),
         throwIf(isNil, () => Error('')),
-        async (thief) => {
+        async (member) => {
           try {
-            const image = await this.generateThiefImage({
-              character: thief.character,
-              background: thief.background,
+            const image = await this.generateMemberImage({
+              character: member.character,
+              background: member.background,
             })
 
-            return { ...thief, image }
+            return { ...member, image }
           } catch {
             throw new Error('조직원 이미지를 생성하지 못했습니다. 다시 시도해주세요.')
           }
@@ -43,13 +49,15 @@ class Gemini {
       throw new Error('조직원을 생성하지 못했습니다. 다시 시도해주세요.')
     } finally {
       this.loadingCount--
+      this.onLoading(this.newsLoading, this.loadingCount)
     }
   }
-  public async generateThiefImage(params: { character: string; background: string }) {
+  public async generateMemberImage(params: { character: string; background: string }) {
     this.loadingCount++
+    this.onLoading(this.newsLoading, this.loadingCount)
 
     try {
-      return pipe(
+      return await pipe(
         params,
         replacePrompt(this.prompt[PROMPT_KEY.GENERATE_MEMBER_IMAGE].ko),
         (prompt) =>
@@ -68,12 +76,13 @@ class Gemini {
       return ''
     } finally {
       this.loadingCount--
+      this.onLoading(this.newsLoading, this.loadingCount)
     }
   }
   public generateTalkResponse(key: PROMPT_KEY) {
     return async (params: MemberProfile & Record<string, string | number>) => {
       try {
-        return pipe(
+        return await pipe(
           params,
           replacePrompt(this.prompt[key].ko),
           (prompt) =>
@@ -91,13 +100,24 @@ class Gemini {
     }
   }
   public async generateNews() {
-    this.loadingCount++
+    this.newsLoading = true
+    this.onLoading(this.newsLoading, this.loadingCount)
 
     try {
+      return await pipe(
+        { events: '', oldEvents: '' },
+        replacePrompt(this.prompt[PROMPT_KEY.GENERATE_NEWS].ko),
+        (prompt) =>
+          ai.models.generateContent({ model: GEMINI_MODELS.FLASH_LIGHT, contents: prompt }),
+        (response) => this.parseJson<{ main: Array<string>; etc: Array<string> }>(response),
+        throwIf(isNil, () => Error('')),
+        (response) => response
+      )
     } catch {
-      return ''
+      return { main: [], etc: [] }
     } finally {
-      this.loadingCount--
+      this.newsLoading = false
+      this.onLoading(this.newsLoading, this.loadingCount)
     }
   }
 
@@ -113,6 +133,16 @@ class Gemini {
     } catch (error) {
       return null
     }
+  }
+
+  public subscribe(listener: () => void) {
+    this.listeners = [...this.listeners, listener]
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener)
+    }
+  }
+  public getSnapshot() {
+    return this
   }
 }
 

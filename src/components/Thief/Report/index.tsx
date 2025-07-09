@@ -1,9 +1,10 @@
 import { Card } from '@/components'
-import type { Thief } from '@/types'
+import type { Member } from '@/types'
+import { MEMBER_SELECTED_TYPE } from '@/constants'
 import * as Actions from './Actions'
 
-type Props = Thief & {
-  type: 'thief' | 'recruitment'
+type Props = Member & {
+  type: MEMBER_SELECTED_TYPE
   onClose: () => void
 }
 
@@ -26,7 +27,7 @@ const Report: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-2 items-center justify-center px-4">
         <p className="text-xl truncate w-full text-center">{props.name}</p>
       </div>
-      {props.type === 'thief' ? (
+      {props.type === MEMBER_SELECTED_TYPE.DEFAULT ? (
         <Actions.Default {...props} onClose={props.onClose} />
       ) : (
         <Actions.Recruit {...props} onClose={props.onClose} />
